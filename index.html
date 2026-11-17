@@ -9,6 +9,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;900&display=swap" rel="stylesheet">
 <style>
+  @font-face{
+    font-family:"BrushLocal";
+    src:url("brush.woff2") format("woff2");
+    font-weight:400; font-style:normal; font-display:swap;
+  }
   :root{
     --deep:#0a1826;
     --deep-2:#0d2133;
@@ -61,7 +66,7 @@
     animation:rise 1s ease .15s both;
   }
   h1{
-    font-family:"Ma Shan Zheng","Kaiti TC","STKaiti","KaiTi",serif;
+    font-family:"BrushLocal","Ma Shan Zheng","Kaiti TC","STKaiti","KaiTi",serif;
     font-weight:400; color:#f4f9fb;
     line-height:1.04; letter-spacing:.01em;
     text-shadow:
@@ -99,7 +104,7 @@
   /* 兩側豎排題跋 */
   .side-note{
     position:absolute; top:24%; writing-mode:vertical-rl;
-    font-family:"Ma Shan Zheng","Kaiti TC","STKaiti","KaiTi",serif;
+    font-family:"BrushLocal","Ma Shan Zheng","Kaiti TC","STKaiti","KaiTi",serif;
     font-size:clamp(1.05rem,2.1vw,1.6rem); letter-spacing:.5em; color:rgba(220,235,242,.66);
     text-shadow:0 2px 12px rgba(0,0,0,.7);
     animation:rise 1.2s ease 1s both; user-select:none; z-index:2;
@@ -112,7 +117,7 @@
   .wrap{max-width:1120px; margin:0 auto; padding:0 24px}
   section{padding:72px 0 6px}
   .sec-head{display:flex; align-items:baseline; gap:18px; margin-bottom:28px}
-  .sec-head .no{font-family:"Ma Shan Zheng",serif; font-size:1.7rem; color:var(--red)}
+  .sec-head .no{font-family:"BrushLocal","Ma Shan Zheng",serif; font-size:1.7rem; color:var(--red)}
   .sec-head h2{font-size:1.45rem; font-weight:900; letter-spacing:.4em; color:#eef6fa}
   .sec-head .en{font-size:.72rem; letter-spacing:.4em; color:var(--mist-dim)}
   .lead{font-size:1.06rem; line-height:2.2; color:var(--mist-dim); max-width:46em}
