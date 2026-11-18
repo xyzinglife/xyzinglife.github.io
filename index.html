@@ -184,7 +184,7 @@ img{display:block;max-width:100%}
   </div>
   <div class="stage" style="justify-content:flex-start;overflow-y:auto;padding-top:6px">
     <div class="rise" id="flyImgWrap" style="--i:0;width:min(88vw,430px)">
-      <img src="fly-anim.webp" alt="機長起飛動態圖" style="width:100%;border-radius:16px;border:1px solid var(--gold-soft);box-shadow:0 20px 44px rgba(0,0,0,.45)">
+      <img id="flyImg" src="fly-anim.webp" alt="機長起飛動態圖" style="width:100%;border-radius:16px;border:1px solid var(--gold-soft);box-shadow:0 20px 44px rgba(0,0,0,.45)">
     </div>
     <div class="rise" style="--i:1;margin-top:16px">
       <div style="font-size:13px;letter-spacing:.3em;text-indent:.3em;color:var(--paper-dim)">高 度</div>
@@ -360,8 +360,14 @@ document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
 document.getElementById('cueBtn').addEventListener('click',function(){document.getElementById('choices').scrollIntoView({behavior:'smooth'});});
 
 /* ---------- panels ---------- */
+function restartFlyAnim(){
+  var old=document.getElementById('flyImg');if(!old)return;
+  var n=document.createElement('img');n.id='flyImg';n.src=old.getAttribute('src');n.alt=old.alt;n.style.cssText=old.style.cssText;
+  old.replaceWith(n);
+}
+window.addEventListener('pageshow',function(e){if(e.persisted)restartFlyAnim();});
 function openPanel(id){document.getElementById(id).classList.add('open');document.body.classList.add('lock');
-  if(id==='panel-fly')setTimeout(startFlight,650);}
+  if(id==='panel-fly'){restartFlyAnim();setTimeout(startFlight,650);}}
 function closePanels(){document.querySelectorAll('.panel.open').forEach(function(p){p.classList.remove('open');});document.body.classList.remove('lock');}
 document.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',function(){openPanel(b.dataset.open);});});
 document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',closePanels);});
