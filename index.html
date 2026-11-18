@@ -191,8 +191,10 @@ img{display:block;max-width:100%}
       <div id="flyStatus" style="letter-spacing:.34em;text-indent:.34em;color:var(--gold);font-size:15px;min-height:24px">待 命</div>
     </div>
     <div class="btnrow rise" style="--i:2;margin-top:12px">
-      <button class="abtn" id="flyBtn">起飛</button>
+      <button class="abtn" id="flyBtn">自動起飛</button>
+      <button class="abtn" id="holdBtn" style="touch-action:none">按住拉桿</button>
     </div>
+    <p class="rise" style="--i:2;margin-top:10px;color:var(--paper-dim);font-size:12.5px;letter-spacing:.2em;text-indent:.2em">按住「拉桿」親手爬升 · 點下面任一步驟可直達</p>
     <div id="steps" style="width:min(88vw,430px);margin-top:24px;text-align:left;display:grid;gap:12px">
       <div class="step rise" style="--i:3" data-th="0">
         <span class="dot" style="background:var(--gb)"></span>
@@ -218,7 +220,8 @@ img{display:block;max-width:100%}
     <p class="p-caption rise" style="--i:8;margin:20px 0 8px">啟程翱翔 · 直上雲端</p>
   </div>
   <style>
-    .step{display:flex;gap:13px;padding:13px 15px;border:1px solid rgba(246,240,225,.14);border-radius:14px;background:rgba(9,24,52,.5);opacity:.42;transition:opacity .5s,border-color .5s,transform .6s var(--spring-soft)}
+    .step{display:flex;gap:13px;padding:13px 15px;border:1px solid rgba(246,240,225,.14);border-radius:14px;background:rgba(9,24,52,.5);opacity:.42;transition:opacity .5s,border-color .5s,transform .6s var(--spring-soft);cursor:pointer}
+    .step:active{transform:scale(.98)}
     .step .dot{flex:none;width:11px;height:11px;border-radius:50%;margin-top:6px}
     .step h5{font-size:16.5px;letter-spacing:.14em;color:#fff;font-weight:600}
     .step p{margin-top:4px;font-size:14px;line-height:1.85;color:var(--paper-dim)}
@@ -235,7 +238,7 @@ img{display:block;max-width:100%}
   <div class="stage">
     <div id="beam" style="position:absolute;top:-4%;left:50%;width:min(78vw,340px);height:62%;background:linear-gradient(180deg,rgba(255,236,190,.34),rgba(255,236,190,.05) 78%,transparent);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%);filter:blur(2px);pointer-events:none"></div>
     <div id="motes" style="position:absolute;top:8%;left:50%;transform:translateX(-50%);width:min(70vw,300px);height:55%;pointer-events:none"></div>
-    <div class="rise" style="--i:0;perspective:700px;position:relative;z-index:2">
+    <div class="rise" id="sculptWrap" style="--i:0;perspective:700px;position:relative;z-index:2;cursor:grab;touch-action:none">
       <svg id="sculpt" viewBox="0 0 200 260" style="width:min(52vw,215px);filter:drop-shadow(0 24px 30px rgba(0,0,0,.55));will-change:transform" aria-label="大理石雕塑模型">
         <defs>
           <linearGradient id="marble" x1="0" y1="0" x2="1" y2="1">
@@ -256,10 +259,13 @@ img{display:block;max-width:100%}
       <div class="brush" style="font-size:31px;color:var(--gold);letter-spacing:.08em">鎮館之寶</div>
       <p style="margin-top:8px;line-height:2;color:var(--paper);font-size:15px">鄧氏偉器 · 真跡等身模型<br>通體渾然天成，氣勢磅礴<br>觀之令人心折，嘆為觀止</p>
     </div>
-    <div class="btnrow rise" style="--i:2;position:relative;z-index:2">
+    <p class="rise" id="viewNote" style="--i:2;position:relative;z-index:2;margin-top:16px;max-width:86vw;color:var(--gold);font-size:14.5px;letter-spacing:.14em;line-height:1.9;min-height:27px">鑑賞筆記 · 其形昂然，其勢沖天。</p>
+    <div class="btnrow rise" style="--i:3;position:relative;z-index:2;margin-top:14px">
       <button class="abtn" id="zoomBtn">近觀</button>
+      <button class="abtn" id="lightBtn">換燈光</button>
+      <button class="abtn" id="rotBtn">停旋轉</button>
     </div>
-    <p class="p-caption rise" style="--i:3;margin-top:14px;position:relative;z-index:2">靜心鑑賞 · 請勿觸摸（眼看手勿動）</p>
+    <p class="p-caption rise" style="--i:4;margin-top:14px;position:relative;z-index:2">拖動展品可親手轉向 · 點展品換一則筆記</p>
   </div>
 </div>
 
@@ -280,6 +286,8 @@ img{display:block;max-width:100%}
     <div class="btnrow rise" style="--i:2">
       <button class="abtn" data-act="salute">敬禮</button>
       <button class="abtn" data-act="spin">轉圈</button>
+      <button class="abtn" data-act="pat">摸頭</button>
+      <button class="abtn" data-act="dance">跳舞</button>
       <button class="abtn" data-act="jump">起飛</button>
     </div>
     <p class="p-caption rise" style="--i:3;margin-top:14px">機長本長 · 隨意把玩</p>
@@ -325,40 +333,86 @@ function closePanels(){document.querySelectorAll('.panel.open').forEach(function
 document.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',function(){openPanel(b.dataset.open);});});
 document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',closePanels);});
 
-/* ---------- fly: altitude + steps ---------- */
-var flying=false;
+/* ---------- fly: altitude + steps (auto / hold / tap-step) ---------- */
+var flyAlt=0,flyAnim=null;
+var flyNames=['登機就位','滑行蓄勢','全速衝刺','昂首抬輪','巡航 · 萬米雲端'];
+function flySteps(){return [].slice.call(document.querySelectorAll('#steps .step'));}
+function setAlt(v){
+  flyAlt=Math.max(0,Math.min(10000,Math.round(v)));
+  document.getElementById('alt').textContent=flyAlt.toLocaleString('en-US');
+  var idx=0;flySteps().forEach(function(s,i){var on=flyAlt>=+s.dataset.th;s.classList.toggle('on',on);if(on)idx=i;});
+  document.getElementById('flyStatus').textContent=flyAlt>=10000?flyNames[4]:(flyAlt===0?'待 命':flyNames[idx]);
+}
+function animateAlt(to,dur,done){
+  if(flyAnim)cancelAnimationFrame(flyAnim);
+  var from=flyAlt,t0=null;
+  function frame(ts){if(!t0)t0=ts;var p=Math.min((ts-t0)/dur,1);var e=1-Math.pow(1-p,3);
+    setAlt(from+(to-from)*e);
+    if(p<1)flyAnim=requestAnimationFrame(frame);else{flyAnim=null;if(done)done();}}
+  flyAnim=requestAnimationFrame(frame);
+}
 function startFlight(){
-  if(flying)return;flying=true;
-  var alt=document.getElementById('alt'),st=document.getElementById('flyStatus'),btn=document.getElementById('flyBtn');
-  var steps=[].slice.call(document.querySelectorAll('#steps .step'));
-  steps.forEach(function(s){s.classList.remove('on');});
+  var btn=document.getElementById('flyBtn');
   btn.textContent='飛行中…';btn.style.opacity=.55;btn.style.pointerEvents='none';
-  var names=['登機就位','滑行蓄勢','全速衝刺','昂首抬輪','直上雲端 · 巡航'];
-  var t0=null,D=5200;
-  function frame(ts){
-    if(!t0)t0=ts;var p=Math.min((ts-t0)/D,1);
-    var e=1-Math.pow(1-p,3),v=Math.round(e*10000);
-    alt.textContent=v.toLocaleString('en-US');
-    var idx=0;steps.forEach(function(s,i){if(v>=+s.dataset.th){s.classList.add('on');idx=i;}});
-    st.textContent=names[Math.min(idx+(p>0&&idx===0?0:0),4)]&&(p>=1?'巡航 · 萬米雲端':names[Math.min(Math.max(idx,0),4)]);
-    if(p<1)requestAnimationFrame(frame);
-    else{st.textContent='巡航 · 萬米雲端';btn.textContent='再飛一次';btn.style.opacity=1;btn.style.pointerEvents='auto';flying=false;}
-  }
-  requestAnimationFrame(frame);
+  animateAlt(10000,5200,function(){btn.textContent='再飛一次';btn.style.opacity=1;btn.style.pointerEvents='auto';});
 }
 document.getElementById('flyBtn').addEventListener('click',startFlight);
+flySteps().forEach(function(s){s.addEventListener('click',function(){animateAlt(Math.min((+s.dataset.th)+900,10000),1100);});});
+(function(){
+  var hb=document.getElementById('holdBtn'),holding=false,last=0;
+  function climb(ts){if(!holding)return;if(last)setAlt(flyAlt+(ts-last)*3.4);last=ts;
+    if(flyAlt<10000)requestAnimationFrame(climb);}
+  hb.addEventListener('pointerdown',function(e){e.preventDefault();if(flyAnim){cancelAnimationFrame(flyAnim);flyAnim=null;}
+    holding=true;last=0;hb.textContent='拉桿中…';requestAnimationFrame(climb);});
+  ['pointerup','pointerleave','pointercancel'].forEach(function(ev){hb.addEventListener(ev,function(){holding=false;hb.textContent='按住拉桿';});});
+})();
 
-/* ---------- view: motes + zoom ---------- */
+/* ---------- view: motes + zoom + light + drag-rotate + notes ---------- */
 (function(){
   var m=document.getElementById('motes');
   for(var i=0;i<14;i++){var s=document.createElement('span');s.className='mote';
     var sz=(Math.random()*3+1.6);s.style.width=s.style.height=sz+'px';
     s.style.left=(Math.random()*92+4)+'%';s.style.top=(Math.random()*80+12)+'%';
     s.style.animationDuration=(Math.random()*7+6)+'s';s.style.animationDelay=(-Math.random()*8)+'s';m.appendChild(s);}
-  var zoomed=false,sc=document.getElementById('sculpt'),zb=document.getElementById('zoomBtn');
+  var sc=document.getElementById('sculpt'),wrap=document.getElementById('sculptWrap'),
+      beam=document.getElementById('beam'),note=document.getElementById('viewNote');
+  var zoomed=false,zb=document.getElementById('zoomBtn');
   zb.addEventListener('click',function(){zoomed=!zoomed;
-    sc.style.transition='transform 1s cubic-bezier(.3,1.4,.44,1)';
+    sc.style.transition='scale 1s cubic-bezier(.3,1.4,.44,1)';
     sc.style.scale=zoomed?'1.45':'1';zb.textContent=zoomed?'遠觀':'近觀';});
+  /* light cycling */
+  var lights=[
+    ['linear-gradient(180deg,rgba(255,236,190,.34),rgba(255,236,190,.05) 78%,transparent)','暖光'],
+    ['linear-gradient(180deg,rgba(178,216,255,.38),rgba(178,216,255,.06) 78%,transparent)','冷光'],
+    ['linear-gradient(180deg,rgba(255,196,64,.45),rgba(255,196,64,.07) 78%,transparent)','金光']
+  ],li=0;
+  document.getElementById('lightBtn').addEventListener('click',function(){
+    li=(li+1)%lights.length;beam.style.background=lights[li][0];this.textContent='燈光 · '+lights[li][1];});
+  /* auto-rotate toggle (pauses the sway animation) */
+  var rb=document.getElementById('rotBtn'),rotOn=true;
+  rb.addEventListener('click',function(){rotOn=!rotOn;
+    if(rotOn){sc.style.animation='';sc.style.transform='';sc.style.animationPlayState='running';}
+    else sc.style.animationPlayState='paused';
+    rb.textContent=rotOn?'停旋轉':'啟旋轉';});
+  /* drag to rotate manually */
+  var dragging=false,lastX=0,baseRot=0,moved=0;
+  function curRot(){var t=sc.style.transform.match(/rotateY\((-?[\d.]+)deg\)/);return t?parseFloat(t[1]):0;}
+  wrap.addEventListener('pointerdown',function(e){dragging=true;moved=0;lastX=e.clientX;baseRot=curRot();
+    sc.style.animation='none';wrap.setPointerCapture(e.pointerId);wrap.style.cursor='grabbing';});
+  wrap.addEventListener('pointermove',function(e){if(!dragging)return;var dx=e.clientX-lastX;lastX=e.clientX;moved+=Math.abs(dx);
+    baseRot+=dx*.6;sc.style.transform='rotateY('+baseRot+'deg)';});
+  wrap.addEventListener('pointerup',function(){dragging=false;wrap.style.cursor='grab';
+    if(moved<6){ /* click: next note + shine */
+      ni=(ni+1)%notes.length;note.textContent=notes[ni];
+      sc.animate([{filter:'drop-shadow(0 24px 30px rgba(0,0,0,.55)) brightness(1)'},
+                  {filter:'drop-shadow(0 24px 30px rgba(0,0,0,.55)) brightness(1.65)'},
+                  {filter:'drop-shadow(0 24px 30px rgba(0,0,0,.55)) brightness(1)'}],{duration:700,easing:'ease-out'});
+    }});
+  wrap.addEventListener('pointercancel',function(){dragging=false;});
+  var notes=['鑑賞筆記 · 其形昂然，其勢沖天。',
+             '鑑賞筆記 · 通體無一贅筆，愈看愈有精神。',
+             '鑑賞筆記 · 館員曰：每日慕名而來者，絡繹不絕。',
+             '鑑賞筆記 · 此器只應天上有，人間難得幾回觀。'],ni=0;
 })();
 
 /* ---------- play: drag spin + tap + actions ---------- */
@@ -372,12 +426,24 @@ document.getElementById('flyBtn').addEventListener('click',startFlight);
     bubble.style.opacity=1;bubble.style.transform='scale(1)';
     clearTimeout(bubbleTimer);bubbleTimer=setTimeout(function(){bubble.style.opacity=0;bubble.style.transform='scale(.6)';},2100);}
   function bump(){n++;count.textContent=n;}
+  function burst(chars){
+    for(var i=0;i<7;i++){var s=document.createElement('span');
+      s.textContent=chars[Math.floor(Math.random()*chars.length)];
+      s.style.cssText='position:absolute;left:'+(38+Math.random()*24)+'%;top:6%;font-size:'+(15+Math.random()*13)+'px;pointer-events:none;z-index:5';
+      wrap.appendChild(s);
+      var dx=(Math.random()*110-55),dy=-(60+Math.random()*80);
+      s.animate([{transform:'translate(0,0) scale(.5)',opacity:0},
+                 {transform:'translate('+(dx*.6)+'px,'+(dy*.6)+'px) scale(1.15)',opacity:1,offset:.35},
+                 {transform:'translate('+dx+'px,'+dy+'px) scale(1)',opacity:0}],
+                {duration:950+Math.random()*450,easing:'cubic-bezier(.22,1,.36,1)'});
+      (function(el){setTimeout(function(){el.remove();},1500);})(s);}
+  }
   function inertia(){if(Math.abs(vel)>.25){rot+=vel;vel*=.955;apply();anim=requestAnimationFrame(inertia);}else anim=null;}
   wrap.addEventListener('pointerdown',function(e){dragging=true;moved=0;lastX=e.clientX;vel=0;if(anim)cancelAnimationFrame(anim);wrap.setPointerCapture(e.pointerId);wrap.style.cursor='grabbing';});
   wrap.addEventListener('pointermove',function(e){if(!dragging)return;var dx=e.clientX-lastX;lastX=e.clientX;moved+=Math.abs(dx);rot+=dx*.7;vel=dx*.7;apply();});
   wrap.addEventListener('pointerup',function(e){dragging=false;wrap.style.cursor='grab';
     if(moved<7){ /* tap */
-      bump();say();
+      bump();say();burst(['✦','✧','·']);
       fig.animate([{transform:'scale(1,1)'},{transform:'scale(1.12,.82)'},{transform:'scale(.94,1.1)'},{transform:'scale(1,1)'}],{duration:560,easing:'cubic-bezier(.34,1.8,.44,1)'});
     }else{bump();inertia();}});
   wrap.addEventListener('pointercancel',function(){dragging=false;});
@@ -385,7 +451,18 @@ document.getElementById('flyBtn').addEventListener('click',startFlight);
     salute:function(){say('機長，向你敬禮！');wrap.animate([{transform:'rotateY('+rot+'deg) rotate(0deg)'},{transform:'rotateY('+rot+'deg) rotate(-7deg)'},{transform:'rotateY('+rot+'deg) rotate(0deg)'}],{duration:750,easing:'cubic-bezier(.34,1.8,.44,1)'});},
     spin:function(){say('轉圈？小意思。');var from=rot;rot+=720;wrap.style.transition='transform 1.15s cubic-bezier(.3,1.25,.4,1)';apply();
       setTimeout(function(){wrap.style.transition='';},1200);},
-    jump:function(){say('起飛！');wrap.animate([{transform:'rotateY('+rot+'deg) translateY(0)'},{transform:'rotateY('+rot+'deg) translateY(-64px) scale(1.05)'},{transform:'rotateY('+rot+'deg) translateY(0)'}],{duration:820,easing:'cubic-bezier(.34,1.8,.44,1)'});}
+    jump:function(){say('起飛！');burst(['✦','✈','✦']);wrap.animate([{transform:'rotateY('+rot+'deg) translateY(0)'},{transform:'rotateY('+rot+'deg) translateY(-64px) scale(1.05)'},{transform:'rotateY('+rot+'deg) translateY(0)'}],{duration:820,easing:'cubic-bezier(.34,1.8,.44,1)'});},
+    pat:function(){say('頭可斷，髮型不能亂。');burst(['♥','♥','✦']);
+      fig.animate([{transform:'translateY(0) scale(1,1)'},{transform:'translateY(10px) scale(1.06,.9)'},{transform:'translateY(-4px) scale(.98,1.04)'},{transform:'translateY(0) scale(1,1)'}],{duration:640,easing:'cubic-bezier(.34,1.8,.44,1)'});},
+    dance:function(){say('看好了，只跳一次。');burst(['♪','♫','♪']);
+      wrap.animate([
+        {transform:'rotateY('+rot+'deg) translateX(0) rotate(0deg)'},
+        {transform:'rotateY('+rot+'deg) translateX(-16px) rotate(-5deg)'},
+        {transform:'rotateY('+rot+'deg) translateX(16px) rotate(5deg)'},
+        {transform:'rotateY('+rot+'deg) translateX(-13px) rotate(-4deg)'},
+        {transform:'rotateY('+rot+'deg) translateX(13px) rotate(4deg)'},
+        {transform:'rotateY('+rot+'deg) translateX(0) rotate(0deg)'}],
+        {duration:1150,easing:'ease-in-out'});}
   };
   document.querySelectorAll('[data-act]').forEach(function(b){b.addEventListener('click',function(){bump();acts[b.dataset.act]();});});
 })();
