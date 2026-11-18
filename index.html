@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>鄧機長的雞巴大</title>
-<link rel="preload" as="image" href="hero-ink.webp">
+<link rel="preload" as="image" href="pic-hero.webp">
 <meta name="description" content="鄧機長的雞巴大 — 水墨夜荷之上，擇一途：起飛、欣賞、把玩。">
 <style>
 @font-face{font-family:'BrushLocal';src:url('brush2.woff2') format('woff2');font-display:swap}
@@ -26,7 +26,7 @@ img{display:block;max-width:100%}
 
 /* ---------- HERO ---------- */
 .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
-.hero-bg{position:absolute;inset:-4%;background:#0d2144 url('hero-ink.webp') center/cover no-repeat;animation:kenburns 46s ease-in-out infinite alternate;will-change:transform}
+.hero-bg{position:absolute;inset:-4%;background:#0d2144 url('pic-hero.webp') center/cover no-repeat;animation:kenburns 46s ease-in-out infinite alternate;will-change:transform}
 @keyframes kenburns{from{transform:scale(1) translate(0,0)}to{transform:scale(1.12) translate(-1.6%,1.8%)}}
 .hero-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,15,35,.42),rgba(5,15,35,.08) 38%,rgba(5,15,35,.18) 62%,rgba(8,24,49,.88));pointer-events:none}
 #fx{position:absolute;inset:0;pointer-events:none}
@@ -124,7 +124,7 @@ img{display:block;max-width:100%}
   <div class="cards">
     <button class="card reveal" data-open="panel-fly">
       <div class="thumb">
-        <img class="ph" src="takeoff-ink.webp" alt="水墨飛機起飛">
+        <img class="ph" src="pic-takeoff.webp" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=this.src.split('?')[0]+'?r='+Date.now()}" alt="水墨飛機起飛">
         <svg class="route" viewBox="0 0 340 64" preserveAspectRatio="none" aria-hidden="true">
           <path style="--len:150" stroke="#4285f4" d="M4 56 C 60 54, 92 50, 128 40"/>
           <path style="--len:150" stroke="#ea4335" d="M128 40 C 164 30, 196 22, 232 16"/>
@@ -156,7 +156,7 @@ img{display:block;max-width:100%}
 
     <button class="card reveal" data-open="panel-play">
       <div class="thumb">
-        <img class="ph" src="captain-model.webp" alt="鄧機長手辦模型" style="object-position:center 22%">
+        <img class="ph" src="pic-captain.webp" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=this.src.split('?')[0]+'?r='+Date.now()}" alt="鄧機長手辦模型" style="object-position:center 22%">
         <svg class="route" viewBox="0 0 340 64" preserveAspectRatio="none" aria-hidden="true">
           <path style="--len:150" stroke="#34a853" d="M4 8 C 80 40, 150 52, 220 44"/>
           <path style="--len:150" stroke="#fbbc04" d="M220 44 C 268 38, 308 22, 336 8"/>
@@ -184,7 +184,7 @@ img{display:block;max-width:100%}
   </div>
   <div class="stage" style="justify-content:flex-start;overflow-y:auto;padding-top:6px">
     <div class="rise" id="flyImgWrap" style="--i:0;width:min(88vw,430px)">
-      <img id="flyImg" src="fly-anim.webp" alt="機長起飛動態圖" style="width:100%;border-radius:16px;border:1px solid var(--gold-soft);box-shadow:0 20px 44px rgba(0,0,0,.45)">
+      <img id="flyImg" src="fly-loop.webp" alt="機長起飛動態圖" style="width:100%;border-radius:16px;border:1px solid var(--gold-soft);box-shadow:0 20px 44px rgba(0,0,0,.45)">
     </div>
     <div class="rise" style="--i:1;margin-top:16px">
       <div style="font-size:13px;letter-spacing:.3em;text-indent:.3em;color:var(--paper-dim)">高 度</div>
@@ -312,7 +312,7 @@ img{display:block;max-width:100%}
     <div id="bubble" style="position:relative;z-index:3;max-width:82vw;background:#fff;color:#12264d;border-radius:16px;padding:10px 18px;font-size:16px;letter-spacing:.06em;opacity:0;transform:scale(.6);transition:opacity .3s,transform .5s var(--spring);box-shadow:0 10px 26px rgba(0,0,0,.35)">本機長，穩。</div>
     <div class="rise" style="--i:0;perspective:800px;margin-top:10px">
       <div id="figWrap" style="position:relative;will-change:transform;cursor:grab;touch-action:none">
-        <img id="fig" src="captain-model.webp" alt="鄧機長手辦模型" style="width:min(62vw,250px);border-radius:18px;box-shadow:0 30px 50px rgba(0,0,0,.5)" draggable="false">
+        <img id="fig" src="pic-captain.webp" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=this.src.split('?')[0]+'?r='+Date.now()}" alt="鄧機長手辦模型" style="width:min(62vw,250px);border-radius:18px;box-shadow:0 30px 50px rgba(0,0,0,.5)" draggable="false">
       </div>
     </div>
     <div class="rise" style="--i:1;margin-top:20px;color:var(--paper-dim);letter-spacing:.26em;text-indent:.26em;font-size:13px">已把玩 <span id="playCount" style="color:var(--gold);font-size:16px">0</span> 次 · 拖動旋轉，點他有反應</div>
@@ -362,7 +362,7 @@ document.getElementById('cueBtn').addEventListener('click',function(){document.g
 /* ---------- panels ---------- */
 function restartFlyAnim(){
   var old=document.getElementById('flyImg');if(!old)return;
-  var n=document.createElement('img');n.id='flyImg';n.src=old.getAttribute('src');n.alt=old.alt;n.style.cssText=old.style.cssText;
+  var n=document.createElement('img');n.id='flyImg';n.src=old.getAttribute('src');n.alt=old.alt;n.style.cssText=old.style.cssText;n.onerror=function(){if(!n.dataset.r){n.dataset.r=1;n.src=n.src.split('?')[0]+'?r='+Date.now();}};
   old.replaceWith(n);
 }
 window.addEventListener('pageshow',function(e){if(e.persisted)restartFlyAnim();});
