@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>鄧機長的雞巴大</title>
-<link rel="preload" as="image" href="pic-hero.webp">
+<link rel="preload" as="image" href="pic-hero.webp" fetchpriority="high">
 <meta name="description" content="鄧機長的雞巴大 — 水墨夜荷之上，擇一途：起飛、欣賞、把玩。">
 <style>
 @font-face{font-family:'BrushLocal';src:url('brush2.woff2') format('woff2');font-display:swap}
@@ -124,7 +124,7 @@ img{display:block;max-width:100%}
   <div class="cards">
     <button class="card reveal" data-open="panel-fly">
       <div class="thumb">
-        <img class="ph" src="pic-takeoff.webp" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=this.src.split('?')[0]+'?r='+Date.now()}" alt="水墨飛機起飛">
+        <img class="ph" loading="lazy" decoding="async" src="pic-takeoff.webp" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=this.src.split('?')[0]+'?r='+Date.now()}" alt="水墨飛機起飛">
         <svg class="route" viewBox="0 0 340 64" preserveAspectRatio="none" aria-hidden="true">
           <path style="--len:150" stroke="#4285f4" d="M4 56 C 60 54, 92 50, 128 40"/>
           <path style="--len:150" stroke="#ea4335" d="M128 40 C 164 30, 196 22, 232 16"/>
@@ -156,7 +156,7 @@ img{display:block;max-width:100%}
 
     <button class="card reveal" data-open="panel-play">
       <div class="thumb">
-        <img class="ph" src="pic-captain.webp" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=this.src.split('?')[0]+'?r='+Date.now()}" alt="鄧機長手辦模型" style="object-position:center 22%">
+        <img class="ph" loading="lazy" decoding="async" src="pic-captain.webp" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=this.src.split('?')[0]+'?r='+Date.now()}" alt="鄧機長手辦模型" style="object-position:center 22%">
         <svg class="route" viewBox="0 0 340 64" preserveAspectRatio="none" aria-hidden="true">
           <path style="--len:150" stroke="#34a853" d="M4 8 C 80 40, 150 52, 220 44"/>
           <path style="--len:150" stroke="#fbbc04" d="M220 44 C 268 38, 308 22, 336 8"/>
@@ -184,7 +184,7 @@ img{display:block;max-width:100%}
   </div>
   <div class="stage" style="justify-content:flex-start;overflow-y:auto;padding-top:6px">
     <div class="rise" id="flyImgWrap" style="--i:0;width:min(88vw,430px)">
-      <img id="flyImg" src="fly-loop.webp" alt="機長起飛動態圖" style="width:100%;border-radius:16px;border:1px solid var(--gold-soft);box-shadow:0 20px 44px rgba(0,0,0,.45)">
+      <img id="flyImg" src="fly-poster.webp" data-src="fly-loop.webp" alt="機長起飛動態圖" style="width:100%;border-radius:16px;border:1px solid var(--gold-soft);box-shadow:0 20px 44px rgba(0,0,0,.45)">
     </div>
     <div class="rise" style="--i:1;margin-top:16px">
       <div style="font-size:13px;letter-spacing:.3em;text-indent:.3em;color:var(--paper-dim)">高 度</div>
@@ -354,6 +354,13 @@ img{display:block;max-width:100%}
   loop();
 })();
 
+/* ---------- warm-up: preload heavy images in background after first paint ---------- */
+window.addEventListener('load',function(){
+  setTimeout(function(){
+    ['fly-loop.webp','pic-takeoff.webp','pic-captain.webp'].forEach(function(u){var i=new Image();i.src=u;});
+  },1200);
+});
+
 /* ---------- reveal on scroll ---------- */
 var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:.25});
 document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
@@ -362,7 +369,8 @@ document.getElementById('cueBtn').addEventListener('click',function(){document.g
 /* ---------- panels ---------- */
 function restartFlyAnim(){
   var old=document.getElementById('flyImg');if(!old)return;
-  var n=document.createElement('img');n.id='flyImg';n.src=old.getAttribute('src');n.alt=old.alt;n.style.cssText=old.style.cssText;n.onerror=function(){if(!n.dataset.r){n.dataset.r=1;n.src=n.src.split('?')[0]+'?r='+Date.now();}};
+  var target=old.getAttribute('data-src')||old.getAttribute('src');
+  var n=document.createElement('img');n.id='flyImg';n.src=target;n.alt=old.alt;n.style.cssText=old.style.cssText;n.onerror=function(){if(!n.dataset.r){n.dataset.r=1;n.src=n.src.split('?')[0]+'?r='+Date.now();}};
   old.replaceWith(n);
 }
 window.addEventListener('pageshow',function(e){if(e.persisted)restartFlyAnim();});
