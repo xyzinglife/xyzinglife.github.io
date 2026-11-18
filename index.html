@@ -1,254 +1,395 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>鄧機長的雞巴大 — XYZing</title>
-<meta name="description" content="xyzing.loc.cc — 鄧機長題字，終身註冊，水墨長青。">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;900&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>鄧機長的雞巴大 · xyzing.loc.cc</title>
+<meta name="description" content="鄧機長的雞巴大 — 水墨夜荷之上，擇一途：起飛、欣賞、把玩。">
 <style>
-  @font-face{
-    font-family:"BrushLocal";
-    src:url("brush.woff2") format("woff2");
-    font-weight:400; font-style:normal; font-display:swap;
-  }
-  :root{
-    --deep:#0a1826;
-    --deep-2:#0d2133;
-    --mist:#dcebf2;
-    --mist-dim:#9db8c4;
-    --gold:#c9a44f;
-    --gold-bright:#e8c877;
-    --red:#d8453a;
-    --red-deep:#b3352b;
-    --line:rgba(220,235,242,.16);
-    --card:rgba(13,33,51,.62);
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{
-    font-family:"Noto Serif TC","Songti TC","PMingLiU",serif;
-    color:var(--mist);
-    background:linear-gradient(180deg, var(--deep) 0%, var(--deep-2) 55%, var(--deep) 100%);
-    min-height:100vh; overflow-x:hidden;
-  }
+@font-face{font-family:'BrushLocal';src:url('brush2.woff2') format('woff2');font-display:swap}
+:root{
+  --ink:#081831; --paper:#f6f0e1; --paper-dim:rgba(246,240,225,.72);
+  --verm:#e0492f; --gold:#d9a94f; --gold-soft:rgba(217,169,79,.55);
+  --gb:#4285f4; --gr:#ea4335; --gy:#fbbc04; --gg:#34a853;
+  --spring:cubic-bezier(.34,1.65,.44,1);
+  --spring-soft:cubic-bezier(.3,1.35,.44,1);
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--paper);font-family:"Songti TC","STSong","Noto Serif TC","SimSun",serif;overflow-x:hidden}
+body.lock{overflow:hidden}
+.brush{font-family:'BrushLocal',"Songti TC",serif}
+button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
+img{display:block;max-width:100%}
 
-  /* ── 開篇主視覺 ─────────────────── */
-  .hero{
-    position:relative; min-height:100svh;
-    display:flex; flex-direction:column;
-    background:url("hero-ink.webp") center 30%/cover no-repeat;
-    isolation:isolate;
-  }
-  .hero::before{
-    content:""; position:absolute; inset:0; z-index:-1;
-    background:
-      linear-gradient(180deg, rgba(7,17,28,.55) 0%, rgba(7,17,28,.18) 30%, rgba(7,17,28,.30) 62%, rgba(10,24,38,.92) 100%),
-      radial-gradient(90% 55% at 50% 40%, transparent 40%, rgba(7,17,28,.38) 100%);
-  }
-  header.top{
-    display:flex; justify-content:space-between; align-items:center;
-    padding:24px clamp(20px,4vw,44px) 16px;
-    font-size:.82rem; letter-spacing:.35em; color:var(--mist);
-  }
-  header.top .brand{font-weight:900; letter-spacing:.5em; text-shadow:0 2px 12px rgba(0,0,0,.6)}
-  header.top .brand b{color:var(--red); font-weight:900}
-  header.top nav a{color:var(--mist); text-decoration:none; margin-left:26px; letter-spacing:.3em; text-shadow:0 2px 10px rgba(0,0,0,.6)}
-  header.top nav a:hover{color:var(--gold-bright)}
+/* ---------- HERO ---------- */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.hero-bg{position:absolute;inset:-4%;background:url('hero-ink.webp') center/cover no-repeat;animation:kenburns 46s ease-in-out infinite alternate;will-change:transform}
+@keyframes kenburns{from{transform:scale(1) translate(0,0)}to{transform:scale(1.12) translate(-1.6%,1.8%)}}
+.hero-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,15,35,.42),rgba(5,15,35,.08) 38%,rgba(5,15,35,.18) 62%,rgba(8,24,49,.88));pointer-events:none}
+#fx{position:absolute;inset:0;pointer-events:none}
+.hero-inner{position:relative;z-index:3;text-align:center;padding:24px 16px 90px;animation:heroIn 1.4s var(--ease) both .15s}
+@keyframes heroIn{from{opacity:0;transform:translateY(34px) scale(.97)}to{opacity:1;transform:none}}
+.hero-kicker{letter-spacing:.55em;font-size:12px;color:var(--gold);text-indent:.55em;margin-bottom:14px}
+.hero-title{font-size:min(23vw,118px);line-height:1.04;color:#fff;text-shadow:0 6px 44px rgba(0,0,0,.55),0 2px 10px rgba(0,0,0,.5)}
+.hero-title .verm{color:var(--verm)}
+.hero-title .seal{display:inline-grid;place-items:center;vertical-align:.08em;margin-left:.12em;width:.62em;height:.62em;background:var(--verm);color:#fff;font-size:.52em;border-radius:.09em;box-shadow:0 4px 18px rgba(0,0,0,.4);transform:rotate(-4deg)}
+.hero-sub{margin-top:18px;font-size:14px;letter-spacing:.34em;text-indent:.34em;color:var(--paper-dim)}
+.scroll-cue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:4;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--paper);font-size:13px;letter-spacing:.4em;text-indent:.4em;opacity:.92}
+.scroll-cue .chev{width:14px;height:14px;border-right:2px solid var(--gold);border-bottom:2px solid var(--gold);transform:rotate(45deg);animation:cueBob 1.6s var(--spring-soft) infinite}
+@keyframes cueBob{0%,100%{transform:rotate(45deg) translate(0,0)}50%{transform:rotate(45deg) translate(4px,4px)}}
 
-  .hero-core{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:4vh 16px 10vh; position:relative}
-  .kicker{
-    font-size:clamp(.78rem,2vw,.92rem); letter-spacing:1em; text-indent:1em;
-    color:var(--gold-bright); font-weight:600; margin-bottom:2.6vh;
-    text-shadow:0 2px 14px rgba(0,0,0,.75);
-    animation:rise 1s ease .15s both;
-  }
-  h1{
-    font-family:"BrushLocal","Ma Shan Zheng","Kaiti TC","STKaiti","KaiTi",serif;
-    font-weight:400; color:#f4f9fb;
-    line-height:1.04; letter-spacing:.01em;
-    text-shadow:
-      0 3px 0 rgba(6,14,22,.35),
-      0 10px 28px rgba(0,0,0,.65),
-      0 26px 70px rgba(0,0,0,.55);
-    animation:inkin 1.5s cubic-bezier(.19,.7,.22,1) both;
-  }
-  h1 .l1{display:block; font-size:clamp(3.2rem, 12.5vw, 10.5rem)}
-  h1 .l2{display:block; font-size:clamp(4.6rem, 18vw, 15rem); margin-top:.02em}
-  h1 .red{color:var(--red); text-shadow:0 3px 0 rgba(40,4,2,.4), 0 12px 30px rgba(0,0,0,.6), 0 0 44px rgba(216,69,58,.35)}
-  .seal{
-    display:inline-flex; align-items:center; justify-content:center;
-    width:clamp(54px,7.5vw,92px); height:clamp(54px,7.5vw,92px);
-    margin-left:.22em;
-    background:linear-gradient(145deg, #c93a30 0%, var(--red-deep) 100%);
-    color:#f8efdd; font-family:"Noto Serif TC",serif; font-weight:900;
-    font-size:clamp(1.6rem,3.6vw,2.9rem); line-height:1; border-radius:10px;
-    box-shadow:0 10px 26px rgba(0,0,0,.5), inset 0 0 0 2px rgba(248,239,221,.35);
-    transform:rotate(5deg) translateY(-.05em);
-    animation:stamp .5s cubic-bezier(.2,2.2,.4,1) 1.25s both;
-  }
-  .sub{
-    margin-top:3vh; font-size:clamp(.95rem,2.4vw,1.2rem);
-    letter-spacing:.6em; text-indent:.6em; color:var(--mist);
-    text-shadow:0 2px 12px rgba(0,0,0,.8);
-    animation:rise 1s ease .6s both;
-  }
-  .sub i{font-style:normal; color:var(--gold-bright)}
-  .scroll-hint{
-    position:absolute; left:50%; bottom:26px; transform:translateX(-50%);
-    font-size:.72rem; letter-spacing:.6em; text-indent:.6em; color:var(--mist-dim);
-    animation:breathe 2.6s ease-in-out infinite; white-space:nowrap;
-  }
-  /* 兩側豎排題跋 */
-  .side-note{
-    position:absolute; top:24%; writing-mode:vertical-rl;
-    font-family:"BrushLocal","Ma Shan Zheng","Kaiti TC","STKaiti","KaiTi",serif;
-    font-size:clamp(1.05rem,2.1vw,1.6rem); letter-spacing:.5em; color:rgba(220,235,242,.66);
-    text-shadow:0 2px 12px rgba(0,0,0,.7);
-    animation:rise 1.2s ease 1s both; user-select:none; z-index:2;
-  }
-  .side-note.left{left:3%}
-  .side-note.right{right:3%}
-  @media (max-width:820px){ .side-note{display:none} }
+/* ---------- CHOICES ---------- */
+.choices{position:relative;padding:84px 20px 30px;background:linear-gradient(180deg,#081831,#0a1f42 55%,#081831)}
+.choices-head{text-align:center;margin-bottom:44px;opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease),transform .8s var(--spring-soft)}
+.choices-head.in{opacity:1;transform:none}
+.choices-head h2{font-size:min(15vw,64px);color:#fff;letter-spacing:.06em}
+.choices-head p{margin-top:10px;color:var(--paper-dim);letter-spacing:.3em;text-indent:.3em;font-size:13px}
+.cards{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:26px}
+.card{position:relative;border:1px solid rgba(217,169,79,.35);border-radius:20px;overflow:hidden;background:#0d2650;text-align:left;width:100%;opacity:0;transform:translateY(44px) scale(.97);transition:opacity .7s var(--ease),transform .8s var(--spring-soft);box-shadow:0 18px 44px rgba(0,0,0,.35)}
+.card.in{opacity:1;transform:none}
+.card:active{transform:scale(.975)}
+.card .thumb{position:relative;height:172px;overflow:hidden}
+.card .thumb img.ph{width:100%;height:100%;object-fit:cover;transform:scale(1.02);transition:transform 1.2s var(--ease)}
+.card.in .thumb img.ph{transform:scale(1.1)}
+.card .thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(8,24,49,.55))}
+.card .route{position:absolute;left:0;right:0;bottom:8px;height:64px;z-index:2}
+.card .route path{fill:none;stroke-width:3.4;stroke-linecap:round;stroke-dasharray:var(--len,600);stroke-dashoffset:var(--len,600);transition:stroke-dashoffset 1.6s var(--ease) .25s}
+.card.in .route path{stroke-dashoffset:0}
+.card .body{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 20px}
+.card h3{font-size:44px;color:#fff;line-height:1}
+.card .sub{margin-top:7px;font-size:13px;letter-spacing:.22em;color:var(--paper-dim)}
+.card .go{flex:none;width:46px;height:46px;border-radius:50%;border:1px solid var(--gold-soft);display:grid;place-items:center;transition:transform .5s var(--spring)}
+.card:active .go{transform:rotate(-38deg) scale(1.12)}
+.card .go svg{width:20px;height:20px}
+.card .art{display:grid;place-items:center;height:100%;background:radial-gradient(120% 130% at 50% 0%,#14305e,#0a1c3a)}
+.card .art svg{height:150px}
+.card .art .draw{fill:none;stroke-linecap:round;stroke-dasharray:var(--len,400);stroke-dashoffset:var(--len,400);transition:stroke-dashoffset 1.8s var(--ease) .2s}
+.card.in .art .draw{stroke-dashoffset:0}
 
-  /* ── 章節 ─────────────────────────── */
-  .wrap{max-width:1120px; margin:0 auto; padding:0 24px}
-  section{padding:72px 0 6px}
-  .sec-head{display:flex; align-items:baseline; gap:18px; margin-bottom:28px}
-  .sec-head .no{font-family:"BrushLocal","Ma Shan Zheng",serif; font-size:1.7rem; color:var(--red)}
-  .sec-head h2{font-size:1.45rem; font-weight:900; letter-spacing:.4em; color:#eef6fa}
-  .sec-head .en{font-size:.72rem; letter-spacing:.4em; color:var(--mist-dim)}
-  .lead{font-size:1.06rem; line-height:2.2; color:var(--mist-dim); max-width:46em}
-  .lead b{color:var(--mist)}
-  .lead .hl{color:var(--gold-bright); font-weight:900}
+/* ---------- FOOTER INFO ---------- */
+.info{max-width:760px;margin:0 auto;padding:64px 24px 30px;display:grid;gap:34px}
+.info section h4{font-size:15px;letter-spacing:.42em;color:var(--gold);margin-bottom:12px}
+.info section p{color:var(--paper-dim);line-height:2;font-size:15px}
+.info a{color:var(--paper);text-decoration:none;border-bottom:1px dotted var(--gold-soft)}
+.foot{padding:26px 20px 44px;text-align:center;color:rgba(246,240,225,.45);font-size:12px;letter-spacing:.28em;text-indent:.28em;line-height:2.1}
 
-  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:16px; margin-top:34px}
-  .card{
-    border:1px solid var(--line); border-radius:8px; padding:24px 22px 20px;
-    background:var(--card); backdrop-filter:blur(3px);
-    transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease;
-  }
-  .card:hover{transform:translateY(-4px); border-color:rgba(201,164,79,.55); box-shadow:0 16px 34px rgba(0,0,0,.4)}
-  .card .k{font-size:.72rem; letter-spacing:.45em; color:var(--gold); font-weight:600}
-  .card .v{font-size:1.45rem; font-weight:900; margin:10px 0 6px; letter-spacing:.05em; color:#f2f8fb}
-  .card .d{font-size:.86rem; color:var(--mist-dim); line-height:1.85}
-
-  .sister{
-    margin-top:36px; border:1px solid var(--line); border-radius:8px;
-    padding:28px; display:flex; flex-wrap:wrap; gap:18px; align-items:center; justify-content:space-between;
-    background:linear-gradient(120deg, rgba(19,44,66,.72), rgba(10,24,38,.5));
-  }
-  .sister .t{font-size:1.15rem; font-weight:900; letter-spacing:.25em; color:#eef6fa}
-  .sister .d{font-size:.9rem; color:var(--mist-dim); margin-top:6px; letter-spacing:.12em}
-  .btn{
-    display:inline-block; text-decoration:none; color:#0a1826; background:linear-gradient(145deg, var(--gold-bright), var(--gold));
-    padding:13px 30px; border-radius:4px; letter-spacing:.35em; text-indent:.35em; font-size:.9rem; font-weight:900;
-    transition:transform .3s ease, box-shadow .3s ease;
-  }
-  .btn:hover{transform:translateY(-2px); box-shadow:0 12px 26px rgba(201,164,79,.3)}
-
-  footer{
-    margin-top:88px; border-top:1px solid var(--line);
-    padding:30px 0 46px; text-align:center; color:var(--mist-dim);
-    font-size:.8rem; letter-spacing:.4em; line-height:2.2;
-  }
-  footer .stamp-sm{
-    display:inline-flex; width:30px; height:30px; border-radius:5px; margin-bottom:10px;
-    align-items:center; justify-content:center; background:var(--red-deep); color:#f8efdd;
-    font-weight:900; font-size:.95rem; transform:rotate(-4deg);
-  }
-
-  .reveal{opacity:0; transform:translateY(22px); transition:opacity .9s ease, transform .9s ease}
-  .reveal.in{opacity:1; transform:none}
-
-  @keyframes inkin{from{opacity:0; filter:blur(16px); transform:scale(1.05)} to{opacity:1; filter:blur(0); transform:scale(1)}}
-  @keyframes rise{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
-  @keyframes stamp{from{opacity:0; transform:rotate(-14deg) scale(1.9)} to{opacity:1; transform:rotate(5deg) translateY(-.05em) scale(1)}}
-  @keyframes breathe{0%,100%{opacity:.45} 50%{opacity:1}}
-  @media (prefers-reduced-motion: reduce){
-    *{animation:none!important; transition:none!important}
-    .reveal{opacity:1; transform:none}
-  }
+/* ---------- PANELS ---------- */
+.panel{position:fixed;inset:0;z-index:50;transform:translateY(103%);transition:transform .78s var(--spring-soft),visibility 0s .8s;display:flex;flex-direction:column;overflow:hidden;visibility:hidden}
+.panel.open{transform:translateY(0);visibility:visible;transition:transform .78s var(--spring-soft)}
+.panel .topbar{display:flex;align-items:center;gap:14px;padding:calc(12px + env(safe-area-inset-top)) 18px 10px;z-index:5;position:relative}
+.back{display:inline-flex;align-items:center;gap:8px;padding:9px 18px 9px 13px;border:1px solid rgba(246,240,225,.4);border-radius:999px;font-size:14px;letter-spacing:.2em;background:rgba(6,16,36,.45);backdrop-filter:blur(6px);transition:transform .45s var(--spring)}
+.back:active{transform:scale(.92)}
+.panel .ptitle{font-size:30px;color:#fff}
+.panel .stage{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 20px calc(26px + env(safe-area-inset-bottom));text-align:center;overflow:hidden}
+.rise{opacity:0;transform:translateY(30px)}
+.panel.open .rise{animation:riseIn .9s var(--spring-soft) forwards;animation-delay:calc(.18s + var(--i,0)*.13s)}
+@keyframes riseIn{to{opacity:1;transform:none}}
+.p-caption{color:var(--paper-dim);letter-spacing:.26em;text-indent:.26em;font-size:13px;line-height:2.1}
+.btnrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:22px}
+.abtn{padding:12px 24px;border-radius:999px;border:1px solid var(--gold-soft);background:rgba(10,26,54,.55);color:var(--paper);font-size:15px;letter-spacing:.24em;text-indent:.24em;backdrop-filter:blur(6px);transition:transform .45s var(--spring),background .3s}
+.abtn:active{transform:scale(.9);background:rgba(217,169,79,.25)}
+.flyvid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#beam{animation:sway 7s ease-in-out infinite alternate;transform-origin:top center}
+@keyframes sway{from{transform:translateX(-52%) rotate(-2.2deg)}to{transform:translateX(-48%) rotate(2.2deg)}}
+#sculpt{animation:sculptSway 9s ease-in-out infinite alternate}
+@keyframes sculptSway{from{transform:rotateY(-7deg) rotateX(1.5deg)}to{transform:rotateY(7deg) rotateX(-1.5deg)}}
+.mote{position:absolute;border-radius:50%;background:rgba(255,238,196,.75);pointer-events:none;animation:moteFloat linear infinite}
+@keyframes moteFloat{from{transform:translateY(12px);opacity:0}18%{opacity:.9}82%{opacity:.7}to{transform:translateY(-120px);opacity:0}}
 </style>
 </head>
 <body>
 
-  <div class="hero">
-    <header class="top">
-      <div class="brand">XYZ<b>ING</b></div>
-      <nav><a href="#about">本站</a><a href="#facts">誌事</a><a href="#sister">姊妹站</a></nav>
-    </header>
-    <div class="side-note left">墨落驚風雨</div>
-    <div class="side-note right">字字皆千鈞</div>
-    <div class="hero-core">
-      <p class="kicker">鄧 機 長 親 筆 題 字</p>
-      <h1><span class="l1">鄧機長的</span><span class="l2"><span class="red">雞巴</span>大<span class="seal">鄧</span></span></h1>
-      <p class="sub">筆力千鈞 <i>·</i> 氣象萬千</p>
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="hero-bg"></div>
+  <canvas id="fx"></canvas>
+  <div class="hero-shade"></div>
+  <div class="hero-inner">
+    <div class="hero-kicker">水 墨 夜 荷</div>
+    <h1 class="hero-title brush">鄧機長的<br><span class="verm">雞巴</span>大<span class="seal brush">鄧</span></h1>
+    <div class="hero-sub">xyzing.loc.cc</div>
+  </div>
+  <button class="scroll-cue" id="cueBtn" aria-label="向下選擇">擇一途<span class="chev"></span></button>
+</header>
+
+<!-- ================= CHOICES ================= -->
+<main class="choices" id="choices">
+  <div class="choices-head reveal">
+    <h2 class="brush">擇一途</h2>
+    <p>點 選 進 入</p>
+  </div>
+  <div class="cards">
+    <button class="card reveal" data-open="panel-fly">
+      <div class="thumb">
+        <img class="ph" src="takeoff-ink.webp" alt="水墨飛機起飛">
+        <svg class="route" viewBox="0 0 340 64" preserveAspectRatio="none" aria-hidden="true">
+          <path style="--len:150" stroke="#4285f4" d="M4 56 C 60 54, 92 50, 128 40"/>
+          <path style="--len:150" stroke="#ea4335" d="M128 40 C 164 30, 196 22, 232 16"/>
+          <path style="--len:150" stroke="#fbbc04" d="M232 16 C 268 10, 306 6, 336 4"/>
+        </svg>
+      </div>
+      <div class="body">
+        <div><h3 class="brush">起飛</h3><div class="sub">啟程翱翔 · 直上雲端</div></div>
+        <span class="go"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 5l7 7-7 7" stroke="#d9a94f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+    </button>
+
+    <button class="card reveal" data-open="panel-view">
+      <div class="thumb">
+        <div class="art">
+          <svg viewBox="0 0 120 160" aria-hidden="true">
+            <path class="draw" style="--len:330" stroke="#f6f0e1" stroke-width="3" d="M60 14 C 74 14 80 26 80 40 L80 92 L40 92 L40 40 C40 26 46 14 60 14 Z"/>
+            <path class="draw" style="--len:120" stroke="#d9a94f" stroke-width="2.4" d="M48 34 C 56 52 54 70 50 88"/>
+            <path class="draw" style="--len:120" stroke="#4285f4" stroke-width="2.4" d="M72 34 C 64 52 66 70 70 88"/>
+            <path class="draw" style="--len:230" stroke="#f6f0e1" stroke-width="3" d="M30 108 H90 M24 108 V96 H96 V108 M20 124 H100 M14 124 V112 H106 V124"/>
+          </svg>
+        </div>
+      </div>
+      <div class="body">
+        <div><h3 class="brush">欣賞</h3><div class="sub">鎮館之寶 · 靜心鑑賞</div></div>
+        <span class="go"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 5l7 7-7 7" stroke="#d9a94f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+    </button>
+
+    <button class="card reveal" data-open="panel-play">
+      <div class="thumb">
+        <img class="ph" src="captain-model.webp" alt="鄧機長手辦模型" style="object-position:center 22%">
+        <svg class="route" viewBox="0 0 340 64" preserveAspectRatio="none" aria-hidden="true">
+          <path style="--len:150" stroke="#34a853" d="M4 8 C 80 40, 150 52, 220 44"/>
+          <path style="--len:150" stroke="#fbbc04" d="M220 44 C 268 38, 308 22, 336 8"/>
+        </svg>
+      </div>
+      <div class="body">
+        <div><h3 class="brush">把玩</h3><div class="sub">機長本長 · 隨意把玩</div></div>
+        <span class="go"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 5l7 7-7 7" stroke="#d9a94f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+    </button>
+  </div>
+
+  <div class="info">
+    <section><h4>本 站</h4><p>鄧機長的雞巴大。水墨夜荷一池，紅鯉三五尾，藏機長偉器於雲端之上。</p></section>
+    <section><h4>誌 事</h4><p>丙午年冬，站成於 Netlify，憑證自續，三十日不墜則不收。此頁為記。</p></section>
+    <section><h4>姊 妹 站</h4><p><a href="https://xyzinglife.loc.cc">xyzinglife.loc.cc</a> · <a href="https://taiga.loc.cc">taiga.loc.cc</a></p></section>
+  </div>
+  <div class="foot">XYZING · LOC · CC<br>Powered by Netlify</div>
+</main>
+
+<!-- ================= PANEL: 起飛 ================= -->
+<div class="panel" id="panel-fly" style="background:linear-gradient(180deg,#0a2148,#071630)">
+  <div class="topbar">
+    <button class="back" data-close>‹ 返回</button>
+    <div class="ptitle brush">起飛</div>
+  </div>
+  <div class="stage" style="justify-content:flex-start;overflow-y:auto;padding-top:6px">
+    <div class="rise" style="--i:0;width:min(88vw,430px)">
+      <img src="fly-anim.webp" alt="機長起飛動態圖" style="width:100%;border-radius:16px;border:1px solid var(--gold-soft);box-shadow:0 20px 44px rgba(0,0,0,.45)">
     </div>
-    <p class="scroll-hint">向下捲軸 · 繼續觀賞</p>
-  </div>
-
-  <div class="wrap">
-    <section id="about">
-      <div class="sec-head reveal"><span class="no">壹</span><h2>本站</h2><span class="en">ABOUT</span></div>
-      <p class="lead reveal">
-        此地乃 <b>xyzing.loc.cc</b>，鄧機長題字鎮站之寶頁。夜水湯湯，荷影沉沉，錦鯉潛行——
-        字是毛筆楷體，一筆一劃皆見功力；站是終身註冊，一立便是<span class="hl">一百年</span>。
-        不賣貨、不攬客，只把這七個大字堂堂正正懸在水天之間：路過的朋友，請抬頭看字，低頭趕路。
-      </p>
-    </section>
-
-    <section id="facts">
-      <div class="sec-head reveal"><span class="no">貳</span><h2>誌事</h2><span class="en">RECORDS</span></div>
-      <div class="cards">
-        <div class="card reveal">
-          <div class="k">註冊</div><div class="v">終身</div>
-          <div class="d">二〇二六年十一月十六日領地，到期二一二六年，整整一個世紀。</div>
-        </div>
-        <div class="card reveal">
-          <div class="k">門牌</div><div class="v">xyzing.loc.cc</div>
-          <div class="d">NodeLoc 免費域名，Yunamo 託管解析，門牌雖小，來歷清白。</div>
-        </div>
-        <div class="card reveal">
-          <div class="k">鎖鑰</div><div class="v">HTTPS 已備</div>
-          <div class="d">Let's Encrypt 證書在身，評級 A+，自動續期，夜夜鎖門。</div>
-        </div>
-        <div class="card reveal">
-          <div class="k">棲身</div><div class="v">Netlify</div>
-          <div class="d">頁面棲於 Netlify，源出 GitHub 倉庫，一經修改，自動換新裝。</div>
-        </div>
+    <div class="rise" style="--i:1;margin-top:16px">
+      <div style="font-size:13px;letter-spacing:.3em;text-indent:.3em;color:var(--paper-dim)">高 度</div>
+      <div style="font-size:46px;line-height:1.15;color:#fff;font-variant-numeric:tabular-nums"><span id="alt">0</span><span style="font-size:18px;color:var(--gold)"> 米</span></div>
+      <div id="flyStatus" style="letter-spacing:.34em;text-indent:.34em;color:var(--gold);font-size:15px;min-height:24px">待 命</div>
+    </div>
+    <div class="btnrow rise" style="--i:2;margin-top:12px">
+      <button class="abtn" id="flyBtn">起飛</button>
+    </div>
+    <div id="steps" style="width:min(88vw,430px);margin-top:24px;text-align:left;display:grid;gap:12px">
+      <div class="step rise" style="--i:3" data-th="0">
+        <span class="dot" style="background:var(--gb)"></span>
+        <div><h5>一 · 登機就位</h5><p>機長正襟危坐，深吸一口氣，氣沉丹田——起飛之前，先把氣勢立住。</p></div>
       </div>
-    </section>
-
-    <section id="sister">
-      <div class="sec-head reveal"><span class="no">參</span><h2>姊妹站</h2><span class="en">SISTER SITE</span></div>
-      <div class="sister reveal">
-        <div>
-          <div class="t">XYZingLife</div>
-          <div class="d">xyzinglife.loc.cc — 同日領地、同批落戶的姊妹門牌。</div>
-        </div>
-        <a class="btn" href="https://xyzinglife.loc.cc">前往拜訪</a>
+      <div class="step rise" style="--i:4" data-th="800">
+        <span class="dot" style="background:var(--gr)"></span>
+        <div><h5>二 · 滑行蓄勢</h5><p>沿著跑道緩緩滑行，不慌不忙。偉器低伏，力量內斂，蓄勢待發。</p></div>
       </div>
-    </section>
-
-    <footer>
-      <div class="stamp-sm">印</div><br>
-      XYZING.LOC.CC · 二〇二六年冬月立<br>
-      本頁由 Netlify 呈獻 · 字為鄧機長親題
-    </footer>
+      <div class="step rise" style="--i:5" data-th="2600">
+        <span class="dot" style="background:var(--gy)"></span>
+        <div><h5>三 · 全速衝刺</h5><p>油門一把推滿，速度拉到極致，跑道在身後飛退。此刻只有一條路：向前。</p></div>
+      </div>
+      <div class="step rise" style="--i:6" data-th="5200">
+        <span class="dot" style="background:var(--gg)"></span>
+        <div><h5>四 · 昂首抬輪</h5><p>時機一到，手腕一沉，機頭昂然抬起。起飛，就在這一瞬——乾脆，利落，不回頭。</p></div>
+      </div>
+      <div class="step rise" style="--i:7" data-th="8600">
+        <span class="dot" style="background:var(--gold)"></span>
+        <div><h5>五 · 直上雲端</h5><p>穿雲破霧，一路上行至萬米高空。巡航姿態，穩如泰山，機長的航程才剛剛開始。</p></div>
+      </div>
+    </div>
+    <p class="p-caption rise" style="--i:8;margin:20px 0 8px">啟程翱翔 · 直上雲端</p>
   </div>
+  <style>
+    .step{display:flex;gap:13px;padding:13px 15px;border:1px solid rgba(246,240,225,.14);border-radius:14px;background:rgba(9,24,52,.5);opacity:.42;transition:opacity .5s,border-color .5s,transform .6s var(--spring-soft)}
+    .step .dot{flex:none;width:11px;height:11px;border-radius:50%;margin-top:6px}
+    .step h5{font-size:16.5px;letter-spacing:.14em;color:#fff;font-weight:600}
+    .step p{margin-top:4px;font-size:14px;line-height:1.85;color:var(--paper-dim)}
+    .step.on{opacity:1;border-color:var(--gold-soft);transform:translateX(4px)}
+  </style>
+</div>
+
+<!-- ================= PANEL: 欣賞 ================= -->
+<div class="panel" id="panel-view" style="background:radial-gradient(110% 90% at 50% 0%,#12294f,#050f22 70%)">
+  <div class="topbar">
+    <button class="back" data-close>‹ 返回</button>
+    <div class="ptitle brush">欣賞</div>
+  </div>
+  <div class="stage">
+    <div id="beam" style="position:absolute;top:-4%;left:50%;width:min(78vw,340px);height:62%;background:linear-gradient(180deg,rgba(255,236,190,.34),rgba(255,236,190,.05) 78%,transparent);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%);filter:blur(2px);pointer-events:none"></div>
+    <div id="motes" style="position:absolute;top:8%;left:50%;transform:translateX(-50%);width:min(70vw,300px);height:55%;pointer-events:none"></div>
+    <div class="rise" style="--i:0;perspective:700px;position:relative;z-index:2">
+      <svg id="sculpt" viewBox="0 0 200 260" style="width:min(52vw,215px);filter:drop-shadow(0 24px 30px rgba(0,0,0,.55));will-change:transform" aria-label="大理石雕塑模型">
+        <defs>
+          <linearGradient id="marble" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#fdfaf2"/><stop offset=".45" stop-color="#e9e2d0"/>
+            <stop offset=".75" stop-color="#cfc4a8"/><stop offset="1" stop-color="#f3ecd9"/>
+          </linearGradient>
+        </defs>
+        <path d="M100 18 C 122 18 134 36 134 58 L134 158 L66 158 L66 58 C66 36 78 18 100 18 Z" fill="url(#marble)"/>
+        <path d="M78 44 C 88 74 84 108 79 146" fill="none" stroke="#d9a94f" stroke-width="2.6" stroke-linecap="round" opacity=".85"/>
+        <path d="M122 44 C 112 74 116 108 121 146" fill="none" stroke="#8fa8c8" stroke-width="2.2" stroke-linecap="round" opacity=".7"/>
+        <path d="M66 158 H134 L142 176 H58 Z" fill="#b8ab8d"/>
+        <rect x="44" y="176" width="112" height="14" rx="2" fill="#2a3c5f"/>
+        <rect x="34" y="190" width="132" height="16" rx="2" fill="#1d2c49"/>
+        <rect x="24" y="206" width="152" height="18" rx="2" fill="#141f36"/>
+      </svg>
+    </div>
+    <div class="rise" style="--i:1;position:relative;z-index:2;margin-top:26px;border:1px solid var(--gold-soft);border-radius:12px;padding:16px 26px 13px;background:rgba(217,169,79,.07);max-width:88vw">
+      <div class="brush" style="font-size:31px;color:var(--gold);letter-spacing:.08em">鎮館之寶</div>
+      <p style="margin-top:8px;line-height:2;color:var(--paper);font-size:15px">鄧氏偉器 · 真跡等身模型<br>通體渾然天成，氣勢磅礴<br>觀之令人心折，嘆為觀止</p>
+    </div>
+    <div class="btnrow rise" style="--i:2;position:relative;z-index:2">
+      <button class="abtn" id="zoomBtn">近觀</button>
+    </div>
+    <p class="p-caption rise" style="--i:3;margin-top:14px;position:relative;z-index:2">靜心鑑賞 · 請勿觸摸（眼看手勿動）</p>
+  </div>
+</div>
+
+<!-- ================= PANEL: 把玩 ================= -->
+<div class="panel" id="panel-play" style="background:linear-gradient(180deg,#0a2148,#071630)">
+  <div class="topbar">
+    <button class="back" data-close>‹ 返回</button>
+    <div class="ptitle brush">把玩</div>
+  </div>
+  <div class="stage">
+    <div id="bubble" style="position:relative;z-index:3;max-width:82vw;background:#fff;color:#12264d;border-radius:16px;padding:10px 18px;font-size:16px;letter-spacing:.06em;opacity:0;transform:scale(.6);transition:opacity .3s,transform .5s var(--spring);box-shadow:0 10px 26px rgba(0,0,0,.35)">本機長，穩。</div>
+    <div class="rise" style="--i:0;perspective:800px;margin-top:10px">
+      <div id="figWrap" style="position:relative;will-change:transform;cursor:grab;touch-action:none">
+        <img id="fig" src="captain-model.webp" alt="鄧機長手辦模型" style="width:min(62vw,250px);border-radius:18px;box-shadow:0 30px 50px rgba(0,0,0,.5)" draggable="false">
+      </div>
+    </div>
+    <div class="rise" style="--i:1;margin-top:20px;color:var(--paper-dim);letter-spacing:.26em;text-indent:.26em;font-size:13px">已把玩 <span id="playCount" style="color:var(--gold);font-size:16px">0</span> 次 · 拖動旋轉，點他有反應</div>
+    <div class="btnrow rise" style="--i:2">
+      <button class="abtn" data-act="salute">敬禮</button>
+      <button class="abtn" data-act="spin">轉圈</button>
+      <button class="abtn" data-act="jump">起飛</button>
+    </div>
+    <p class="p-caption rise" style="--i:3;margin-top:14px">機長本長 · 隨意把玩</p>
+  </div>
+</div>
 
 <script>
-  (function(){
-    var els = document.querySelectorAll('.reveal');
-    if(!('IntersectionObserver' in window)){ els.forEach(function(e){e.classList.add('in')}); return; }
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
-    },{threshold:.12});
-    els.forEach(function(e){ io.observe(e); });
-  })();
+/* ---------- hero canvas: ripples + gold dust + stars ---------- */
+(function(){
+  var cv=document.getElementById('fx'),ctx=cv.getContext('2d'),W,H,parts=[],rips=[],stars=[],t=0;
+  function size(){W=cv.width=cv.offsetWidth*devicePixelRatio;H=cv.height=cv.offsetHeight*devicePixelRatio;
+    stars=[];for(var i=0;i<46;i++)stars.push({x:Math.random()*W,y:Math.random()*H*.42,r:(Math.random()*1.3+.5)*devicePixelRatio,p:Math.random()*6.28});}
+  size();addEventListener('resize',size);
+  function spawn(){if(parts.length<34)parts.push({x:Math.random()*W,y:H*.55+Math.random()*H*.45,r:Math.random()*1.8+.7,s:(Math.random()*.35+.14)*devicePixelRatio,dr:Math.random()*6.28,life:1});}
+  function loop(){
+    t+=.016;ctx.clearRect(0,0,W,H);
+    for(var i=0;i<stars.length;i++){var s=stars[i];ctx.globalAlpha=.35+.55*Math.abs(Math.sin(t*1.4+s.p));ctx.fillStyle='#ffe9b0';ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,6.29);ctx.fill();}
+    ctx.globalAlpha=1;
+    if(Math.random()<.5)spawn();
+    if(Math.random()<.045&&rips.length<5)rips.push({x:W*(.18+Math.random()*.64),y:H*(.74+Math.random()*.2),r:2,a:.5});
+    for(var j=rips.length-1;j>=0;j--){var rp=rips[j];rp.r+=1.5*devicePixelRatio;rp.a-=.006;
+      if(rp.a<=0){rips.splice(j,1);continue;}
+      ctx.strokeStyle='rgba(190,220,255,'+rp.a+')';ctx.lineWidth=1.4*devicePixelRatio;
+      ctx.beginPath();ctx.ellipse(rp.x,rp.y,rp.r,rp.r*.34,0,0,6.29);ctx.stroke();}
+    for(var k=parts.length-1;k>=0;k--){var p=parts[k];p.y-=p.s;p.x+=Math.sin(t*2+p.dr)*.3;p.life-=.0022;
+      if(p.y<H*.3||p.life<=0){parts.splice(k,1);continue;}
+      ctx.globalAlpha=Math.max(p.life,0)*.85;ctx.fillStyle='#f7cf6b';
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r*devicePixelRatio,0,6.29);ctx.fill();}
+    ctx.globalAlpha=1;requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ---------- reveal on scroll ---------- */
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:.25});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+document.getElementById('cueBtn').addEventListener('click',function(){document.getElementById('choices').scrollIntoView({behavior:'smooth'});});
+
+/* ---------- panels ---------- */
+function openPanel(id){document.getElementById(id).classList.add('open');document.body.classList.add('lock');
+  if(id==='panel-fly')setTimeout(startFlight,650);}
+function closePanels(){document.querySelectorAll('.panel.open').forEach(function(p){p.classList.remove('open');});document.body.classList.remove('lock');}
+document.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',function(){openPanel(b.dataset.open);});});
+document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',closePanels);});
+
+/* ---------- fly: altitude + steps ---------- */
+var flying=false;
+function startFlight(){
+  if(flying)return;flying=true;
+  var alt=document.getElementById('alt'),st=document.getElementById('flyStatus'),btn=document.getElementById('flyBtn');
+  var steps=[].slice.call(document.querySelectorAll('#steps .step'));
+  steps.forEach(function(s){s.classList.remove('on');});
+  btn.textContent='飛行中…';btn.style.opacity=.55;btn.style.pointerEvents='none';
+  var names=['登機就位','滑行蓄勢','全速衝刺','昂首抬輪','直上雲端 · 巡航'];
+  var t0=null,D=5200;
+  function frame(ts){
+    if(!t0)t0=ts;var p=Math.min((ts-t0)/D,1);
+    var e=1-Math.pow(1-p,3),v=Math.round(e*10000);
+    alt.textContent=v.toLocaleString('en-US');
+    var idx=0;steps.forEach(function(s,i){if(v>=+s.dataset.th){s.classList.add('on');idx=i;}});
+    st.textContent=names[Math.min(idx+(p>0&&idx===0?0:0),4)]&&(p>=1?'巡航 · 萬米雲端':names[Math.min(Math.max(idx,0),4)]);
+    if(p<1)requestAnimationFrame(frame);
+    else{st.textContent='巡航 · 萬米雲端';btn.textContent='再飛一次';btn.style.opacity=1;btn.style.pointerEvents='auto';flying=false;}
+  }
+  requestAnimationFrame(frame);
+}
+document.getElementById('flyBtn').addEventListener('click',startFlight);
+
+/* ---------- view: motes + zoom ---------- */
+(function(){
+  var m=document.getElementById('motes');
+  for(var i=0;i<14;i++){var s=document.createElement('span');s.className='mote';
+    var sz=(Math.random()*3+1.6);s.style.width=s.style.height=sz+'px';
+    s.style.left=(Math.random()*92+4)+'%';s.style.top=(Math.random()*80+12)+'%';
+    s.style.animationDuration=(Math.random()*7+6)+'s';s.style.animationDelay=(-Math.random()*8)+'s';m.appendChild(s);}
+  var zoomed=false,sc=document.getElementById('sculpt'),zb=document.getElementById('zoomBtn');
+  zb.addEventListener('click',function(){zoomed=!zoomed;
+    sc.style.transition='transform 1s cubic-bezier(.3,1.4,.44,1)';
+    sc.style.scale=zoomed?'1.45':'1';zb.textContent=zoomed?'遠觀':'近觀';});
+})();
+
+/* ---------- play: drag spin + tap + actions ---------- */
+(function(){
+  var wrap=document.getElementById('figWrap'),fig=document.getElementById('fig'),
+      bubble=document.getElementById('bubble'),count=document.getElementById('playCount');
+  var rot=0,vel=0,dragging=false,lastX=0,moved=0,n=0,anim=null,bubbleTimer=null;
+  var lines=['本機長，穩。','坐穩了，要起飛了。','不要客氣，隨便玩。','玩可以，別玩壞。','本機長經得起把玩。','氣勢這一塊，拿捏了。','再點，我可要升空了。'];
+  function apply(extra){wrap.style.transform='rotateY('+rot+'deg)'+(extra||'');}
+  function say(txt){bubble.textContent=txt||lines[Math.floor(Math.random()*lines.length)];
+    bubble.style.opacity=1;bubble.style.transform='scale(1)';
+    clearTimeout(bubbleTimer);bubbleTimer=setTimeout(function(){bubble.style.opacity=0;bubble.style.transform='scale(.6)';},2100);}
+  function bump(){n++;count.textContent=n;}
+  function inertia(){if(Math.abs(vel)>.25){rot+=vel;vel*=.955;apply();anim=requestAnimationFrame(inertia);}else anim=null;}
+  wrap.addEventListener('pointerdown',function(e){dragging=true;moved=0;lastX=e.clientX;vel=0;if(anim)cancelAnimationFrame(anim);wrap.setPointerCapture(e.pointerId);wrap.style.cursor='grabbing';});
+  wrap.addEventListener('pointermove',function(e){if(!dragging)return;var dx=e.clientX-lastX;lastX=e.clientX;moved+=Math.abs(dx);rot+=dx*.7;vel=dx*.7;apply();});
+  wrap.addEventListener('pointerup',function(e){dragging=false;wrap.style.cursor='grab';
+    if(moved<7){ /* tap */
+      bump();say();
+      fig.animate([{transform:'scale(1,1)'},{transform:'scale(1.12,.82)'},{transform:'scale(.94,1.1)'},{transform:'scale(1,1)'}],{duration:560,easing:'cubic-bezier(.34,1.8,.44,1)'});
+    }else{bump();inertia();}});
+  wrap.addEventListener('pointercancel',function(){dragging=false;});
+  var acts={
+    salute:function(){say('機長，向你敬禮！');wrap.animate([{transform:'rotateY('+rot+'deg) rotate(0deg)'},{transform:'rotateY('+rot+'deg) rotate(-7deg)'},{transform:'rotateY('+rot+'deg) rotate(0deg)'}],{duration:750,easing:'cubic-bezier(.34,1.8,.44,1)'});},
+    spin:function(){say('轉圈？小意思。');var from=rot;rot+=720;wrap.style.transition='transform 1.15s cubic-bezier(.3,1.25,.4,1)';apply();
+      setTimeout(function(){wrap.style.transition='';},1200);},
+    jump:function(){say('起飛！');wrap.animate([{transform:'rotateY('+rot+'deg) translateY(0)'},{transform:'rotateY('+rot+'deg) translateY(-64px) scale(1.05)'},{transform:'rotateY('+rot+'deg) translateY(0)'}],{duration:820,easing:'cubic-bezier(.34,1.8,.44,1)'});}
+  };
+  document.querySelectorAll('[data-act]').forEach(function(b){b.addEventListener('click',function(){bump();acts[b.dataset.act]();});});
+})();
 </script>
 </body>
 </html>
