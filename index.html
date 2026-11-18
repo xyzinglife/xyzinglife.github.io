@@ -182,7 +182,7 @@ img{display:block;max-width:100%}
     <div class="ptitle brush">起飛</div>
   </div>
   <div class="stage" style="justify-content:flex-start;overflow-y:auto;padding-top:6px">
-    <div class="rise" style="--i:0;width:min(88vw,430px)">
+    <div class="rise" id="flyImgWrap" style="--i:0;width:min(88vw,430px)">
       <img src="fly-anim.webp" alt="機長起飛動態圖" style="width:100%;border-radius:16px;border:1px solid var(--gold-soft);box-shadow:0 20px 44px rgba(0,0,0,.45)">
     </div>
     <div class="rise" style="--i:1;margin-top:16px">
@@ -193,8 +193,17 @@ img{display:block;max-width:100%}
     <div class="btnrow rise" style="--i:2;margin-top:12px">
       <button class="abtn" id="flyBtn">自動起飛</button>
       <button class="abtn" id="holdBtn" style="touch-action:none">按住拉桿</button>
+      <button class="abtn" id="gameBtn">手動駕駛</button>
     </div>
     <p class="rise" style="--i:2;margin-top:10px;color:var(--paper-dim);font-size:12.5px;letter-spacing:.2em;text-indent:.2em">按住「拉桿」親手爬升 · 點下面任一步驟可直達</p>
+    <div id="gameHud" class="rise" style="--i:2;display:none;width:min(88vw,430px);margin-top:16px">
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;letter-spacing:.18em;color:var(--paper-dim)"><span>姿 態 儀 · 綠 區 安 全</span><span id="dangerTxt" style="color:#ea4335;font-weight:700"></span></div>
+      <div style="position:relative;height:26px;border-radius:13px;margin-top:7px;background:linear-gradient(90deg,#ea4335 0%,#fbbc04 18%,#fbbc04 32%,#34a853 38%,#34a853 62%,#fbbc04 68%,#fbbc04 82%,#ea4335 100%);box-shadow:inset 0 2px 6px rgba(0,0,0,.45)">
+        <div id="needle" style="position:absolute;top:-5px;left:50%;width:6px;height:36px;margin-left:-3px;border-radius:3px;background:#fff;box-shadow:0 0 10px rgba(255,255,255,.95)"></div>
+      </div>
+      <div style="position:relative;height:9px;border-radius:5px;margin-top:10px;background:rgba(255,255,255,.12);overflow:hidden"><div id="dangerBar" style="height:100%;width:0%;background:linear-gradient(90deg,#fbbc04,#ea4335);border-radius:5px"></div></div>
+      <p style="margin-top:9px;font-size:12.5px;letter-spacing:.13em;color:var(--paper-dim);text-align:center;line-height:1.9">按住「拉桿」抬頭 · 鬆手低頭<br>把白針穩在綠區衝上萬米——衝進紅區撐不住，就會墜機</p>
+    </div>
     <div id="steps" style="width:min(88vw,430px);margin-top:24px;text-align:left;display:grid;gap:12px">
       <div class="step rise" style="--i:3" data-th="0">
         <span class="dot" style="background:var(--gb)"></span>
@@ -219,7 +228,30 @@ img{display:block;max-width:100%}
     </div>
     <p class="p-caption rise" style="--i:8;margin:20px 0 8px">啟程翱翔 · 直上雲端</p>
   </div>
+  <div id="crashFx">
+    <div id="boom"></div>
+    <div id="crashTxt">
+      <div class="brush" id="crashTitle">墜機</div>
+      <p id="crashSub"></p>
+      <button class="abtn" id="retryBtn">再來一次</button>
+    </div>
+  </div>
   <style>
+    #panel-fly{position:fixed}
+    #crashFx{position:absolute;inset:0;display:none;z-index:30;overflow:hidden}
+    #crashFx.show{display:block}
+    #crashFx .flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 42%,rgba(255,190,70,.95),rgba(234,67,53,.78) 44%,rgba(24,2,0,.9) 100%);animation:crashFlash .9s ease-out forwards}
+    #crashFx .flash.gold{background:radial-gradient(circle at 50% 42%,rgba(255,230,150,.95),rgba(217,169,79,.7) 46%,rgba(10,20,44,.88) 100%)}
+    @keyframes crashFlash{0%{opacity:0}10%{opacity:1}100%{opacity:.9}}
+    .shake{animation:crashShake .65s linear}
+    @keyframes crashShake{0%,100%{transform:translate(0,0)}12%{transform:translate(-13px,7px) rotate(-.6deg)}26%{transform:translate(11px,-6px)}40%{transform:translate(-9px,-8px) rotate(.5deg)}55%{transform:translate(8px,6px)}70%{transform:translate(-6px,3px)}85%{transform:translate(4px,-2px)}}
+    #crashTxt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:20px}
+    #crashTitle{font-size:min(30vw,126px);line-height:1.1;color:#ff5a3c;text-shadow:0 6px 0 #7a1503,0 24px 48px rgba(0,0,0,.75);transform:rotate(-4deg)}
+    #crashTitle.gold{color:var(--gold);text-shadow:0 5px 0 #7c5a10,0 24px 48px rgba(0,0,0,.7)}
+    #crashTxt p{color:#ffe9d6;font-size:15.5px;letter-spacing:.2em;line-height:2.1;max-width:88vw}
+    .boomP{position:absolute;border-radius:50%;pointer-events:none}
+    #flyImgWrap{will-change:transform}
+    #flyImgWrap.plunge{animation:none;transition:transform .95s cubic-bezier(.55,-.05,.8,.4);transform:translateY(118%) rotate(-26deg) scale(.55)}
     .step{display:flex;gap:13px;padding:13px 15px;border:1px solid rgba(246,240,225,.14);border-radius:14px;background:rgba(9,24,52,.5);opacity:.42;transition:opacity .5s,border-color .5s,transform .6s var(--spring-soft);cursor:pointer}
     .step:active{transform:scale(.98)}
     .step .dot{flex:none;width:11px;height:11px;border-radius:50%;margin-top:6px}
@@ -361,10 +393,103 @@ flySteps().forEach(function(s){s.addEventListener('click',function(){animateAlt(
 (function(){
   var hb=document.getElementById('holdBtn'),holding=false,last=0;
   function climb(ts){if(!holding)return;if(last)setAlt(flyAlt+(ts-last)*3.4);last=ts;
-    if(flyAlt<10000)requestAnimationFrame(climb);}
-  hb.addEventListener('pointerdown',function(e){e.preventDefault();if(flyAnim){cancelAnimationFrame(flyAnim);flyAnim=null;}
+    if(flyAlt<10000&&!window.__flyGame)requestAnimationFrame(climb);}
+  hb.addEventListener('pointerdown',function(e){if(window.__flyGame)return;e.preventDefault();if(flyAnim){cancelAnimationFrame(flyAnim);flyAnim=null;}
     holding=true;last=0;hb.textContent='拉桿中…';requestAnimationFrame(climb);});
   ['pointerup','pointerleave','pointercancel'].forEach(function(ev){hb.addEventListener(ev,function(){holding=false;hb.textContent='按住拉桿';});});
+})();
+
+/* ---------- fly game: manual flight, stall = crash ---------- */
+(function(){
+  var gameBtn=document.getElementById('gameBtn'),holdBtn=document.getElementById('holdBtn'),
+      hud=document.getElementById('gameHud'),needle=document.getElementById('needle'),
+      dBar=document.getElementById('dangerBar'),dTxt=document.getElementById('dangerTxt'),
+      fx=document.getElementById('crashFx'),boom=document.getElementById('boom'),
+      title=document.getElementById('crashTitle'),sub=document.getElementById('crashSub'),
+      imgWrap=document.getElementById('flyImgWrap'),panel=document.getElementById('panel-fly'),
+      stage=panel.querySelector('.stage');
+  var active=false,holding=false,pitch=0,pv=0,danger=0,lastTs=0,raf=null;
+  holdBtn.addEventListener('pointerdown',function(){if(active)holding=true;});
+  ['pointerup','pointerleave','pointercancel'].forEach(function(ev){holdBtn.addEventListener(ev,function(){holding=false;});});
+  function startGame(){
+    if(active)return;
+    fx.classList.remove('show');boom.innerHTML='';imgWrap.classList.remove('plunge');
+    active=true;window.__flyGame=true;pitch=0;pv=0;danger=0;holding=false;
+    setAlt(0);needle.style.left='50%';dBar.style.width='0%';dTxt.textContent='';
+    hud.style.display='block';
+    gameBtn.textContent='駕駛中…';gameBtn.style.opacity=.55;gameBtn.style.pointerEvents='none';
+    setTimeout(function(){hud.scrollIntoView({behavior:'smooth',block:'center'});},80);
+    lastTs=0;raf=requestAnimationFrame(loop);
+  }
+  function endGame(){
+    active=false;window.__flyGame=false;holding=false;
+    if(raf)cancelAnimationFrame(raf);
+    gameBtn.textContent='手動駕駛';gameBtn.style.opacity=1;gameBtn.style.pointerEvents='auto';
+  }
+  function loop(ts){
+    if(!active)return;
+    if(!panel.classList.contains('open')){endGame();return;}
+    var dt=Math.min((ts-(lastTs||ts))/1000,.05);lastTs=ts;
+    pv+=((holding?168:-102)+(Math.random()*2-1)*135+Math.sin(ts*.0016)*42)*dt;
+    pv*=Math.max(0,1-2.1*dt);
+    pitch+=pv*dt;
+    if(pitch>120){pitch=120;pv=Math.min(pv,0);}
+    if(pitch<-120){pitch=-120;pv=Math.max(pv,0);}
+    needle.style.left=(50+pitch/2.4)+'%';
+    var ap=Math.abs(pitch);
+    if(ap<36)setAlt(flyAlt+460*dt);
+    else if(ap<84)setAlt(flyAlt+195*dt);
+    if(ap>=84){danger+=dt;dTxt.textContent=pitch>0?'失速警告！':'俯衝警告！';}
+    else{danger=Math.max(0,danger-dt*1.7);dTxt.textContent=ap>=36?'姿態警告':'';}
+    dBar.style.width=Math.min(danger/1.15*100,100)+'%';
+    if(danger>=1.15){crash();return;}
+    if(flyAlt>=10000){win();return;}
+    raf=requestAnimationFrame(loop);
+  }
+  function explode(gold){
+    boom.innerHTML='';
+    var flash=document.createElement('div');flash.className='flash'+(gold?' gold':'');boom.appendChild(flash);
+    var cols=gold?['#ffe98a','#f7cf6b','#fff3c4','#d9a94f']:['#ffd23e','#ff7a2f','#ea4335','#ff5a3c','#6b6b6b','#3d3d3d'];
+    for(var i=0;i<30;i++){
+      var s=document.createElement('span');s.className='boomP';
+      var sz=gold?(5+Math.random()*9):(6+Math.random()*16);
+      s.style.width=s.style.height=sz+'px';
+      s.style.left='50%';s.style.top='42%';
+      s.style.background=cols[Math.floor(Math.random()*cols.length)];
+      if(!gold&&i>21){s.style.filter='blur(5px)';s.style.opacity='.55';}
+      boom.appendChild(s);
+      var ang=Math.random()*6.283,dist=(gold?90:120)+Math.random()*(gold?190:260);
+      var dx=Math.cos(ang)*dist,dy=Math.sin(ang)*dist-(gold?30:60);
+      s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},
+                 {transform:'translate(calc(-50% + '+dx+'px),calc(-50% + '+dy+'px)) scale('+(gold?.4:.15)+')',opacity:0}],
+                {duration:850+Math.random()*750,easing:'cubic-bezier(.17,.67,.35,1)'});
+    }
+  }
+  function slam(){
+    title.animate([{transform:'rotate(-4deg) scale(3.2)',opacity:0},
+                   {transform:'rotate(-4deg) scale(.92)',opacity:1,offset:.55},
+                   {transform:'rotate(-4deg) scale(1.06)',offset:.75},
+                   {transform:'rotate(-4deg) scale(1)'}],
+                  {duration:620,easing:'cubic-bezier(.34,1.56,.64,1)',delay:120});
+  }
+  function crash(){
+    endGame();
+    imgWrap.classList.add('plunge');
+    stage.classList.remove('shake');void stage.offsetWidth;stage.classList.add('shake');
+    title.textContent='墜機';title.classList.remove('gold');
+    sub.innerHTML='最終高度 '+flyAlt.toLocaleString('en-US')+' 米<br>'+(pitch>0?'抬頭過猛，當場失速，一頭栽下':'俯衝過度，拉不回來，一頭栽下')+'<br>機長表示：這把不算';
+    fx.classList.add('show');explode(false);slam();
+  }
+  function win(){
+    endGame();
+    title.textContent='成功';title.classList.add('gold');
+    sub.innerHTML='成功爬升至萬米高空<br>全程姿態穩如泰山<br>不愧是機長';
+    fx.classList.add('show');explode(true);slam();
+  }
+  document.getElementById('retryBtn').addEventListener('click',function(){
+    fx.classList.remove('show');imgWrap.classList.remove('plunge');startGame();
+  });
+  gameBtn.addEventListener('click',startGame);
 })();
 
 /* ---------- view: motes + zoom + light + drag-rotate + notes ---------- */
