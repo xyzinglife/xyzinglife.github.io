@@ -79,13 +79,15 @@ img{display:block;max-width:100%}
 /* ---------- PANELS ---------- */
 .panel{position:fixed;inset:0;z-index:50;transform:translateY(103%);transition:transform .78s var(--spring-soft),visibility 0s .8s;display:flex;flex-direction:column;overflow:hidden;visibility:hidden}
 .panel.open{transform:translateY(0);visibility:visible;transition:transform .78s var(--spring-soft)}
-.panel .topbar{display:flex;align-items:center;gap:14px;padding:calc(12px + env(safe-area-inset-top)) 18px 10px;z-index:5;position:relative}
+.panel .topbar{display:flex;align-items:center;gap:14px;padding:calc(12px + env(safe-area-inset-top)) 18px 10px;z-index:60;position:relative}
 .back{display:inline-flex;align-items:center;gap:8px;padding:9px 18px 9px 13px;border:1px solid rgba(246,240,225,.4);border-radius:999px;font-size:14px;letter-spacing:.2em;background:rgba(6,16,36,.45);backdrop-filter:blur(6px);transition:transform .45s var(--spring)}
 .back:active{transform:scale(.92)}
 .panel .ptitle{font-size:30px;color:#fff}
-.panel .stage{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 20px calc(26px + env(safe-area-inset-bottom));text-align:center;overflow:hidden}
+.panel .stage{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:10px 20px calc(26px + env(safe-area-inset-bottom));text-align:center;overflow-y:auto;overflow-x:hidden}
+.panel .stage>*:first-child{margin-top:auto}
+.panel .stage>*:last-child{margin-bottom:auto}
 .rise{opacity:0;transform:translateY(30px)}
-.panel.open .rise{animation:riseIn .9s var(--spring-soft) forwards;animation-delay:calc(.18s + var(--i,0)*.13s)}
+.panel.open .rise{animation:riseIn .65s var(--spring-soft) forwards;animation-delay:calc(.06s + var(--i,0)*.06s)}
 @keyframes riseIn{to{opacity:1;transform:none}}
 .p-caption{color:var(--paper-dim);letter-spacing:.26em;text-indent:.26em;font-size:13px;line-height:2.1}
 .btnrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:22px}
@@ -271,8 +273,8 @@ img{display:block;max-width:100%}
   <div class="stage">
     <div id="beam" style="position:absolute;top:-4%;left:50%;width:min(78vw,340px);height:62%;background:linear-gradient(180deg,rgba(255,236,190,.34),rgba(255,236,190,.05) 78%,transparent);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%);filter:blur(2px);pointer-events:none"></div>
     <div id="motes" style="position:absolute;top:8%;left:50%;transform:translateX(-50%);width:min(70vw,300px);height:55%;pointer-events:none"></div>
-    <div class="rise" id="sculptWrap" style="--i:0;perspective:700px;position:relative;z-index:2;cursor:grab;touch-action:none">
-      <svg id="sculpt" viewBox="0 0 200 260" style="width:min(52vw,215px);filter:drop-shadow(0 24px 30px rgba(0,0,0,.55));will-change:transform" aria-label="大理石雕塑模型">
+    <div class="rise" id="sculptWrap" style="--i:0;perspective:700px;position:relative;z-index:2;cursor:grab;touch-action:none;margin-top:auto">
+      <svg id="sculpt" viewBox="0 0 200 260" style="width:min(44vw,185px);filter:drop-shadow(0 24px 30px rgba(0,0,0,.55));will-change:transform" aria-label="大理石雕塑模型">
         <defs>
           <linearGradient id="marble" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stop-color="#fdfaf2"/><stop offset=".45" stop-color="#e9e2d0"/>
@@ -292,13 +294,13 @@ img{display:block;max-width:100%}
       <div class="brush" style="font-size:31px;color:var(--gold);letter-spacing:.08em">鎮館之寶</div>
       <p style="margin-top:8px;line-height:2;color:var(--paper);font-size:15px">鄧氏偉器 · 真跡等身模型<br>通體渾然天成，氣勢磅礴<br>觀之令人心折，嘆為觀止</p>
     </div>
-    <p class="rise" id="viewNote" style="--i:2;position:relative;z-index:2;margin-top:16px;max-width:86vw;color:var(--gold);font-size:14.5px;letter-spacing:.14em;line-height:1.9;min-height:27px">鑑賞筆記 · 其形昂然，其勢沖天。</p>
+    <p class="rise" id="viewNote" style="--i:2;position:relative;z-index:2;margin-top:16px;max-width:86vw;color:var(--gold);font-size:14.5px;letter-spacing:.14em;line-height:1.9;min-height:54px">鑑賞筆記 · 其形昂然，其勢沖天。</p>
     <div class="btnrow rise" style="--i:3;position:relative;z-index:2;margin-top:14px">
       <button class="abtn" id="zoomBtn">近觀</button>
       <button class="abtn" id="lightBtn">換燈光</button>
       <button class="abtn" id="rotBtn">停旋轉</button>
     </div>
-    <p class="p-caption rise" style="--i:4;margin-top:14px;position:relative;z-index:2">拖動展品可親手轉向 · 點展品換一則筆記</p>
+    <p class="p-caption rise" style="--i:4;margin-top:14px;position:relative;z-index:2;margin-bottom:auto">拖動展品可親手轉向 · 點展品換一則筆記</p>
   </div>
 </div>
 
@@ -310,9 +312,9 @@ img{display:block;max-width:100%}
   </div>
   <div class="stage">
     <div id="bubble" style="position:relative;z-index:3;max-width:82vw;background:#fff;color:#12264d;border-radius:16px;padding:10px 18px;font-size:16px;letter-spacing:.06em;opacity:0;transform:scale(.6);transition:opacity .3s,transform .5s var(--spring);box-shadow:0 10px 26px rgba(0,0,0,.35)">本機長，穩。</div>
-    <div class="rise" style="--i:0;perspective:800px;margin-top:10px">
+    <div class="rise" style="--i:0;perspective:800px;margin-top:16px">
       <div id="figWrap" style="position:relative;will-change:transform;cursor:grab;touch-action:none">
-        <img id="fig" src="pic-captain.webp" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=this.src.split('?')[0]+'?r='+Date.now()}" alt="鄧機長手辦模型" style="width:min(62vw,250px);border-radius:18px;box-shadow:0 30px 50px rgba(0,0,0,.5)" draggable="false">
+        <img id="fig" src="pic-captain.webp" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=this.src.split('?')[0]+'?r='+Date.now()}" alt="鄧機長手辦模型" style="width:min(56vw,228px);border-radius:18px;box-shadow:0 30px 50px rgba(0,0,0,.5)" draggable="false">
       </div>
     </div>
     <div class="rise" style="--i:1;margin-top:20px;color:var(--paper-dim);letter-spacing:.26em;text-indent:.26em;font-size:13px">已把玩 <span id="playCount" style="color:var(--gold);font-size:16px">0</span> 次 · 拖動旋轉，點他有反應</div>
@@ -374,8 +376,15 @@ function restartFlyAnim(){
   old.replaceWith(n);
 }
 window.addEventListener('pageshow',function(e){if(e.persisted)restartFlyAnim();});
+function resetFlyPanel(){
+  var fx=document.getElementById('crashFx');if(fx)fx.classList.remove('show');
+  var w=document.getElementById('flyImgWrap');if(w)w.classList.remove('plunge');
+  if(window.__endFlyGame)window.__endFlyGame();
+  var fb=document.getElementById('flyBtn');if(fb){fb.textContent='自動起飛';fb.style.opacity=1;fb.style.pointerEvents='auto';}
+  setAlt(0);
+}
 function openPanel(id){document.getElementById(id).classList.add('open');document.body.classList.add('lock');
-  if(id==='panel-fly'){restartFlyAnim();setTimeout(startFlight,650);}}
+  if(id==='panel-fly'){resetFlyPanel();restartFlyAnim();setTimeout(startFlight,650);}}
 function closePanels(){document.querySelectorAll('.panel.open').forEach(function(p){p.classList.remove('open');});document.body.classList.remove('lock');}
 document.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',function(){openPanel(b.dataset.open);});});
 document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',closePanels);});
@@ -399,12 +408,13 @@ function animateAlt(to,dur,done){
   flyAnim=requestAnimationFrame(frame);
 }
 function startFlight(){
+  resetFlyPanel();
   var btn=document.getElementById('flyBtn');
   btn.textContent='飛行中…';btn.style.opacity=.55;btn.style.pointerEvents='none';
   animateAlt(10000,5200,function(){btn.textContent='再飛一次';btn.style.opacity=1;btn.style.pointerEvents='auto';});
 }
 document.getElementById('flyBtn').addEventListener('click',startFlight);
-flySteps().forEach(function(s){s.addEventListener('click',function(){animateAlt(Math.min((+s.dataset.th)+900,10000),1100);});});
+flySteps().forEach(function(s){s.addEventListener('click',function(){if(window.__endFlyGame)window.__endFlyGame();animateAlt(Math.min((+s.dataset.th)+900,10000),1100);});});
 (function(){
   var hb=document.getElementById('holdBtn'),holding=false,last=0;
   function climb(ts){if(!holding)return;if(last)setAlt(flyAlt+(ts-last)*3.4);last=ts;
@@ -426,8 +436,11 @@ flySteps().forEach(function(s){s.addEventListener('click',function(){animateAlt(
   var active=false,holding=false,pitch=0,pv=0,danger=0,lastTs=0,raf=null;
   holdBtn.addEventListener('pointerdown',function(){if(active)holding=true;});
   ['pointerup','pointerleave','pointercancel'].forEach(function(ev){holdBtn.addEventListener(ev,function(){holding=false;});});
+  window.__endFlyGame=function(){if(active)endGame();};
   function startGame(){
     if(active)return;
+    if(flyAnim){cancelAnimationFrame(flyAnim);flyAnim=null;}
+    var fb=document.getElementById('flyBtn');if(fb){fb.textContent='自動起飛';fb.style.opacity=1;fb.style.pointerEvents='auto';}
     fx.classList.remove('show');boom.innerHTML='';imgWrap.classList.remove('plunge');
     active=true;window.__flyGame=true;pitch=0;pv=0;danger=0;holding=false;
     setAlt(0);needle.style.left='50%';dBar.style.width='0%';dTxt.textContent='';
