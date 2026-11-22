@@ -7,8 +7,8 @@
 .ax-head p{margin-top:9px;color:var(--paper-dim);font-size:13px;letter-spacing:.26em;text-indent:.26em}
 .ax-rule{width:54px;height:1px;background:var(--gold-soft);margin:16px auto 0}
 .ax-reveal{opacity:0}
-.ax-prog{height:3px;background:rgba(246,240,225,.12);border-radius:2px;overflow:hidden;margin:0 auto 26px;max-width:520px}
-.ax-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--verm));border-radius:2px}
+.ax-prog{height:6px;background:rgba(246,240,225,.12);border-radius:2px;overflow:hidden;margin:0 auto 26px;max-width:520px}
+.ax-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--verm));border-radius:3px;box-shadow:0 0 8px rgba(217,169,79,.8);transition:width .6s ease}
 .chap{border:1px solid rgba(217,169,79,.22);border-radius:16px;background:rgba(9,24,52,.45);padding:24px 22px 20px;margin-bottom:20px}
 .chap .no{font-size:12px;letter-spacing:.4em;color:var(--gold)}
 .chap h4{font-size:23px;letter-spacing:.12em;color:#fff;margin:9px 0 13px;font-weight:600}
@@ -44,6 +44,11 @@
 .pond-hud .cnt{color:var(--paper-dim);font-size:13px;letter-spacing:.24em}
 .pond-hud .cnt b{color:var(--gold);font-size:16px}
 #brushCanvas{width:min(86vw,340px);height:min(86vw,340px);border-radius:16px;border:1px solid rgba(217,169,79,.3);background:#0a1c3c;touch-action:none;cursor:crosshair}
-.brush-bar{width:min(86vw,340px);height:8px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden;margin-top:14px}
-.brush-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--verm))}
+.brush-bar{width:min(86vw,340px);height:10px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden;margin-top:14px}
+.brush-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--verm));box-shadow:0 0 8px rgba(217,169,79,.8);transition:width .3s ease}
 #brushMsg{min-height:30px;margin-top:12px;color:var(--gold);font-size:15px;letter-spacing:.18em;line-height:1.9;text-align:center;padding:0 18px}
+
+.ax-prog-wrap{max-width:520px;margin:0 auto 26px}
+.ax-prog-wrap .ax-prog{margin:0 auto 8px}
+.ax-prog-txt{text-align:center;color:var(--gold);font-size:13px;letter-spacing:.3em;text-indent:.3em}
+.brush-pct{color:var(--gold);font-size:13px;letter-spacing:.24em;margin-top:8px;text-align:center}

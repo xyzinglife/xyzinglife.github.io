@@ -216,7 +216,7 @@ img{display:block;max-width:100%}
       <p>六 章 長 文 · 慢 慢 讀</p>
       <div class="ax-rule"></div>
     </div>
-    <div class="ax-prog"><i id="axProgFill"></i></div>
+    <div class="ax-prog-wrap"><div class="ax-prog"><i id="axProgFill"></i></div><div class="ax-prog-txt" id="axProgTxt">已 讀 0 / 6 章</div></div>
 
     <article class="chap ax-reveal" data-chap>
       <div class="no">第 一 章</div>
@@ -538,6 +538,7 @@ img{display:block;max-width:100%}
     <p class="p-caption rise" style="--i:0">照著淡字描，把格子填滿六成，就有評語</p>
     <div class="rise" style="--i:1;margin-top:14px"><canvas id="brushCanvas" width="680" height="680"></canvas></div>
     <div class="brush-bar rise" style="--i:2"><i id="brushFill"></i></div>
+    <div class="brush-pct rise" style="--i:2" id="brushPct">描摹 0%</div>
     <div id="brushMsg" class="rise" style="--i:3">落筆吧，第一筆最難，也最痛快。</div>
     <div class="btnrow rise" style="--i:4;margin-bottom:26px">
       <button class="abtn" id="brushNext">換一字</button>

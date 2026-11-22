@@ -15,7 +15,8 @@ document.querySelectorAll('[data-scrollto]').forEach(function(b){
 /* ---------- Anime.js scroll reveals + chapter progress ---------- */
 var chapTotal=document.querySelectorAll('[data-chap]').length, chapRead=0;
 var progFill=document.getElementById('axProgFill');
-function updProg(){ if(progFill) progFill.style.width=(chapTotal?Math.round(chapRead/chapTotal*100):0)+'%'; }
+var progTxt=document.getElementById('axProgTxt');
+function updProg(){ if(progFill) progFill.style.width=(chapTotal?Math.round(chapRead/chapTotal*100):0)+'%'; if(progTxt) progTxt.textContent='已 讀 '+chapRead+' / '+chapTotal+' 章'; }
 var io2=new IntersectionObserver(function(es){
   es.forEach(function(e){
     if(!e.isIntersecting) return;
@@ -157,9 +158,12 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
   var kx=koiCv.getContext('2d'), KW=0, KH=0, DPR=1;
   var kois=[], pellets=[], fed=0, running=false, rafId=null;
   var COLORS=['#e0492f','#f7cf6b','#f6f0e1','#e0492f','#d9a94f'];
+  var sizeTries=0;
   function sizeKoi(){
     DPR=Math.min(devicePixelRatio||1,2);
     KW=koiCv.clientWidth; KH=koiCv.clientHeight;
+    if((KW<200||KH<200) && sizeTries<12){ sizeTries++; setTimeout(sizeKoi,120); return; }
+    sizeTries=0;
     koiCv.width=KW*DPR; koiCv.height=KH*DPR; kx.setTransform(DPR,0,0,DPR,0,0);
     glCv.width=KW*DPR; glCv.height=KH*DPR; if(gl) gl.viewport(0,0,glCv.width,glCv.height);
     if(!kois.length){ for(var i=0;i<5;i++) kois.push({
@@ -212,7 +216,7 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
       /* spring steering (maath-style damp) */
       k.vx += ((k.tx-k.x)*.9 - k.vx*2.2)*.016*3.2;
       k.vy += ((k.ty-k.y)*.9 - k.vy*2.2)*.016*3.2;
-      var sp=Math.hypot(k.vx,k.vy), mx=2.4*k.s;
+      var sp=Math.hypot(k.vx,k.vy), mx=(pellets.length?3.6:2.4)*k.s;
       if(sp>mx){ k.vx*=mx/sp; k.vy*=mx/sp; }
       k.x+=k.vx; k.y+=k.vy;
       drawKoi(k,performance.now());
@@ -266,9 +270,10 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
   }
   document.getElementById('pondSound').addEventListener('click',function(){ setSound(!soundOn); });
 
+  addEventListener('resize',function(){ if(panel.classList.contains('open')) sizeKoi(); });
   var pObs=new MutationObserver(function(){
     var open=panel.classList.contains('open');
-    if(open && !running){ sizeKoi(); running=true; pondLoop(); addRipple(.5,.5); }
+    if(open && !running){ running=true; requestAnimationFrame(function(){ requestAnimationFrame(function(){ sizeKoi(); pondLoop(); addRipple(.5,.5); }); }); }
     if(!open && running){ running=false; if(rafId) cancelAnimationFrame(rafId); if(soundOn) setSound(false); }
   });
   pObs.observe(panel,{attributes:true,attributeFilter:['class']});
@@ -311,8 +316,9 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
       ctx.stroke();
     });
   }
+  var pctEl=document.getElementById('brushPct');
   function updMsg(pct){
-    fill.style.width=pct+'%';
+    fill.style.width=pct+'%'; if(pctEl) pctEl.textContent='描摹 '+pct+'%';
     if(pct>=85) msg.textContent='形神兼備！這一字，機長點頭。';
     else if(pct>=60) msg.textContent='已得其形——過六成了，這一字成了。';
     else if(pct>=25) msg.textContent='漸入佳境，筆勢再放開些。';
