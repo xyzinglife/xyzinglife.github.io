@@ -211,8 +211,8 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
       gl.useProgram(prog);
       gl.uniform1f(uTime,t);
       if(uTint){ var tt=.5+.5*Math.sin(t*.07), rr=.82, gg=.9, bb=1.06;
-        if(window.d3 && d3.interpolateRgb){ var s=d3.interpolateRgb('rgb(209,230,255)','rgb(255,237,209)')(tt), n=s.match(/[\d.]+/g);
-          if(n){ rr=+n[0]/255; gg=+n[1]/255; bb=+n[2]/255; } }
+        if(window.d3 && d3.interpolateRgb){ try{ var s=d3.interpolateRgb('rgb(209,230,255)','rgb(255,237,209)')(tt), n=s.match(/[\d.]+/g);
+          if(n){ rr=+n[0]/255; gg=+n[1]/255; bb=+n[2]/255; } }catch(_e2){} }
         gl.uniform3f(uTint,rr,gg,bb); }
       gl.uniform2f(uRes,glCv.width,glCv.height);
       var flat=[]; rips.forEach(function(r){ flat.push(r[0],r[1],r[2]); });
@@ -403,6 +403,13 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
     var evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];
     for(var i=0;i<evs.length;i++){ var p=pos(evs[i]); seg(p[0],p[1]); } });
   ['pointerup','pointercancel'].forEach(function(ev){ draw.addEventListener(ev,function(){ drawing=false; }); });
+  /* mouse fallback: some environments synthesize pointer events poorly */
+  draw.addEventListener('mousedown',function(e){ var __bs=window.__axState.brush||(window.__axState.brush={downs:0}); __bs.mdown=1;
+    drawing=true; lastPt=pos(e);
+    dtx.fillStyle=verm()?'rgba(255,120,90,.92)':'rgba(255,233,176,.92)';
+    dtx.beginPath(); dtx.arc(lastPt[0],lastPt[1],13,0,6.29); dtx.fill(); mark(lastPt[0],lastPt[1]); });
+  draw.addEventListener('mousemove',function(e){ if(!drawing) return; var p=pos(e); seg(p[0],p[1]); });
+  addEventListener('mouseup',function(){ drawing=false; });
   document.getElementById('brushNext').addEventListener('click',function(){ ci=(ci+1)%chars.length; buildGuide(); });
   document.getElementById('brushClear').addEventListener('click',function(){ buildGuide(); });
   window.__axBrushTest=function(){ /* headless self-test: spiral over the guide char */
@@ -416,6 +423,9 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
       inited=true;
       if(document.fonts && document.fonts.load){ document.fonts.load('100px BrushFull').then(buildGuide); }
       else buildGuide();
+      setTimeout(function(){ var __r=draw.getBoundingClientRect(); var __bs=window.__axState.brush||(window.__axState.brush={downs:0});
+        __bs.rect=[Math.round(__r.left),Math.round(__r.top),Math.round(__r.width),Math.round(__r.height)];
+        if(/[?&]debug=1/.test(location.search) && window.__axBrushTest) __axBrushTest(); },1500);
     }
   });
   bObs.observe(panel,{attributes:true,attributeFilter:['class']});

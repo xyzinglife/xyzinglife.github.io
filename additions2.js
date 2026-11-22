@@ -74,8 +74,8 @@ whenVisible(document.getElementById('ax3dBox'), async function(){
       var r=2.6+Math.random()*3.4, th=Math.random()*Math.PI*2, ph=Math.acos(2*Math.random()-1);
       pos[i*3]=r*Math.sin(ph)*Math.cos(th); pos[i*3+1]=r*Math.cos(ph)*.62; pos[i*3+2]=r*Math.sin(ph)*Math.sin(th);
       var pick=Math.random(); tmp.copy(pick<.45?cGold:(pick<.75?cBlue:cWhite));
-      if(window.d3 && d3.interpolateRgb){ var s=d3.interpolateRgb('#f7cf6b','#9db8dd')(Math.random()), m=s.match(/[\d.]+/g);
-        if(m) tmp.setRGB(+m[0]/255,+m[1]/255,+m[2]/255); }
+      if(window.d3 && d3.interpolateRgb){ try{ var s=d3.interpolateRgb('#f7cf6b','#9db8dd')(Math.random()), m=s.match(/[\d.]+/g);
+        if(m) tmp.setRGB(+m[0]/255,+m[1]/255,+m[2]/255); }catch(_e){} }
       col[i*3]=tmp.r; col[i*3+1]=tmp.g; col[i*3+2]=tmp.b;
     }
     var pg=new THREE.BufferGeometry();
@@ -127,8 +127,8 @@ whenVisible(document.getElementById('ax3dBox'), async function(){
         ray.setFromCamera(nd,camera);
         var hits=ray.intersectObject(jade);
         if(hits.length){ pulse=1;
-          if(window.d3 && d3.interpolateRgb){ var s=d3.interpolateRgb('#175c3a','#f7cf6b')(.55), m=s.match(/[\d.]+/g);
-            if(m) jadeMat.emissive.setRGB(+m[0]/255*.6,+m[1]/255*.6,+m[2]/255*.6); }
+          if(window.d3 && d3.interpolateRgb){ try{ var s=d3.interpolateRgb('#175c3a','#f7cf6b')(.55), m=s.match(/[\d.]+/g);
+            if(m) jadeMat.emissive.setRGB(+m[0]/255*.6,+m[1]/255*.6,+m[2]/255*.6); }catch(_e){} }
         }
       } });
     var visible=true;
@@ -156,6 +156,7 @@ whenVisible(document.getElementById('ax3dBox'), async function(){
       if(w && h){ camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h); }
     });
   }catch(e){
+    window.__axState.d3err=e.message; if(window.__axErrs) window.__axErrs.push('3d: '+e.message);
     tipFail('ax3dTip','星河載入失敗，網路慢時多見——不影響其他部分');
   }
 });
@@ -176,10 +177,11 @@ whenVisible(document.getElementById('axPixiBox'), async function(){
     app.stage.addChild(viewport);
     var panX=null, panV=0;
     app.canvas.style.touchAction='none';
-    app.canvas.addEventListener('pointerdown',function(e){ panX=e.clientX; panV=viewport.x; });
-    app.canvas.addEventListener('pointermove',function(e){ if(panX===null) return;
+    var __ps=window.__axState.pixi||(window.__axState.pixi={pdown:0,pmove:0,vx:0});
+    app.canvas.addEventListener('pointerdown',function(e){ __ps.pdown++; panX=e.clientX; panV=viewport.x; });
+    app.canvas.addEventListener('pointermove',function(e){ if(panX===null) return; __ps.pmove++;
       var nx=panV+(e.clientX-panX), minX=-(worldW-W);
-      viewport.x=Math.max(minX,Math.min(0,nx)); });
+      viewport.x=Math.max(minX,Math.min(0,nx)); __ps.vx=Math.round(viewport.x); });
     ['pointerup','pointercancel','pointerleave'].forEach(function(ev){ app.canvas.addEventListener(ev,function(){ panX=null; }); });
     viewport.clamp({left:0,right:worldW,top:0,bottom:H});
     /* distant lotus silhouettes */
@@ -218,6 +220,7 @@ whenVisible(document.getElementById('axPixiBox'), async function(){
       });
     });
   }catch(e){
+    window.__axState.pixierr=e.message; if(window.__axErrs) window.__axErrs.push('pixi: '+e.message);
     tipFail('axPixiTip','金塵載入失敗——不影響其他部分');
   }
 });
