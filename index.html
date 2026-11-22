@@ -100,6 +100,7 @@ img{display:block;max-width:100%}
 @keyframes sculptSway{from{transform:rotateY(-7deg) rotateX(1.5deg)}to{transform:rotateY(7deg) rotateX(-1.5deg)}}
 .mote{position:absolute;border-radius:50%;background:rgba(255,238,196,.75);pointer-events:none;animation:moteFloat linear infinite}
 @keyframes moteFloat{from{transform:translateY(12px);opacity:0}18%{opacity:.9}82%{opacity:.7}to{transform:translateY(-120px);opacity:0}}
+<link rel="stylesheet" href="additions.css">
 </style>
 </head>
 <body>
@@ -171,10 +172,188 @@ img{display:block;max-width:100%}
     </button>
   </div>
 
+  <div class="cards ax-cards">
+    <button class="card reveal" data-scrollto="ax-scroll">
+      <div class="thumb">
+        <img class="ph" loading="lazy" decoding="async" src="pic-hero.webp" alt="水墨夜荷全景">
+      </div>
+      <div class="body">
+        <div><h3 class="brush">長卷</h3><div class="sub">夜荷誌 · 六章長文</div></div>
+        <span class="go"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 5l7 7-7 7" stroke="#d9a94f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+    </button>
+
+    <button class="card reveal" data-open="panel-pond">
+      <div class="thumb">
+        <img class="ph" loading="lazy" decoding="async" src="hero-ink.webp" alt="墨池夜荷">
+      </div>
+      <div class="body">
+        <div><h3 class="brush">墨池</h3><div class="sub">紅鯉夜遊 · 餵食聽水</div></div>
+        <span class="go"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 5l7 7-7 7" stroke="#d9a94f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+    </button>
+
+    <button class="card reveal" data-open="panel-brush">
+      <div class="thumb">
+        <img class="ph" loading="lazy" decoding="async" src="takeoff-ink.webp" alt="水墨起飛圖">
+      </div>
+      <div class="body">
+        <div><h3 class="brush">臨書</h3><div class="sub">臨摹大字 · 親手落筆</div></div>
+        <span class="go"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 5l7 7-7 7" stroke="#d9a94f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+    </button>
+  </div>
+
   <div class="info">
     <section><h4>本 站</h4><p>鄧機長的雞巴大。水墨夜荷一池，紅鯉三五尾，藏機長偉器於雲端之上。</p></section>
     <section><h4>誌 事</h4><p>丙午年冬，站成於 Netlify，憑證自續，三十日不墜則不收。此頁為記。</p></section>
   </div>
+  <!-- ===== v4 新增：長卷 ===== -->
+  <div class="ax-sec" id="ax-scroll">
+    <div class="ax-head ax-reveal">
+      <div class="k">長 卷</div>
+      <h3 class="brush">夜荷誌</h3>
+      <p>六 章 長 文 · 慢 慢 讀</p>
+      <div class="ax-rule"></div>
+    </div>
+    <div class="ax-prog"><i id="axProgFill"></i></div>
+
+    <article class="chap ax-reveal" data-chap>
+      <div class="no">第 一 章</div>
+      <h4>夜荷初綻</h4>
+      <p>入夜之後，這一池水先醒過來。白天裡荷葉是綠的，到了夜裡，綠沉下去，沉成一種近乎墨色的青。月亮還沒升到正空，先有一層薄光浮在水面上，像誰把一匹素絹輕輕鋪開，又捨不得鋪平，留著細細的皺。風從池岸那邊過來，先碰葉，後碰水，葉響是沙沙的，水響是泠泠的，兩種聲音錯開半拍，像一支沒排練過的樂隊，偏偏合拍。</p>
+      <p>荷是在子時前後開的。花苞白日裡攥得緊緊的，像一句到了嘴邊又嚥回去的話；夜深了，人聲散盡，它才慢慢鬆開手指。先是一瓣，再是一瓣，開得極慢，慢到你以為它停了，眨一眨眼，它又多開了一分。守池的人說，荷開的時候有聲音，細如蠶食桑葉，得把耳朵貼到離水面三寸的地方才聽得見。這話真假無人考證，但每一個蹲在池邊聽過的人，回來都說：聽見了。</p>
+      <p>池心有一朵開得最早，人稱「頭荷」。頭荷的瓣尖帶一點胭脂色，不是粉，是血氣上涌時耳根的那種紅。老輩人講，頭荷開的那一夜，池裡的鯉會浮上來，圍著花影轉三圈，不多不少。轉完，月亮正好升到荷尖上，整池水亮一亮，像有人在水底點了一盞燈，又很快按熄——怕驚了花，也怕驚了魚。</p>
+      <p>所以這一站的夜，是從一朵花開始的。你若來得早，天還沒全黑，請先在池邊站一會兒，不要忙著往下走。等頭荷開了，等鯉轉完三圈，等水底的燈亮過又熄了，你才算真正進了這道門。後面的字、畫、器、飛機，都要帶著這一池夜色去看，才看得懂。</p>
+      <div class="end">· 一 ·</div>
+    </article>
+
+    <article class="chap ax-reveal" data-chap>
+      <div class="no">第 二 章</div>
+      <h4>機長其人</h4>
+      <p>鄧機長大名鼎鼎，鼎鼎到何種程度呢——這一站索性拿他的名號做了招牌，七個大字懸在門楣上，毛筆寫就，墨跡淋漓，過路的人抬頭看一眼，沒有不笑的，笑完又沒有不服的。服什麼？服這份坦蕩。世人藏著掖著的事，他偏要寫在天上；世人含蓄委婉的說法，他偏要一筆到底。這種做派，往好聽了說叫磊落，往實在了說，叫有底氣。</p>
+      <p>機長是飛出來的底氣。據說他年輕時第一次上機，別人暈得七葷八素，他穩坐如山，下了機只說了四個字：「不過如此。」後來航線越飛越遠，高度越拉越高，氣流顛簸、雷暴繞飛、夜航跨洋，什麼陣仗都見過了，那四個字卻再沒改過。副駕駛們私下統計，機長在駕駛艙裡說得最少的話是「怎麼辦」，說得最多的是「跟我來」。</p>
+      <p>也有人問：機長威風是真威風，可這跟一池夜荷有什麼相干？相干大了。荷是靜到極處的物，機長是動到極處的人；荷開在子夜，無人處自芬芳，機長飛在雲端，萬人頭頂過而無聲。一個把聲勢收進水裡，一個把聲勢放上天去——這一站把他們放在一處，正是要你看看，什麼叫靜者自靜，動者自雄，兩不相礙，兩相成全。</p>
+      <p>站裡藏著機長的等身模型，通體渾然，氣勢磅礴，就是後文要講的「鎮館之寶」。慕名而來的人，多半先衝著那七個大字，進了門，繞過荷池，見了真容，才明白招牌上寫的不是誇張，是紀實。紀實之外還有一分幽默：機長本人聽說此事，只批了四個字——「實事求是。」你看，還是那副穩如泰山的做派。</p>
+      <div class="end">· 二 ·</div>
+    </article>
+
+    <article class="chap ax-reveal" data-chap>
+      <div class="no">第 三 章</div>
+      <h4>偉器誌</h4>
+      <p>鎮館之寶，是一尊大理石的等身模型。石是整塊的好石，紋理如雲水自生，匠人相石三日，繞著石料走了不知多少圈，茶都涼了三回，才肯下第一鑿。他說這塊石頭裡本來就藏著形狀，他要做的不是雕，而是把多餘的石頭請走，讓裡面的東西自己站出來。這話聽著玄，成品出來，人人信了：通體無一贅筆，該圓的圓，該挺的挺，昂然，沖天，渾然天成。</p>
+      <p>鑑賞此器，講究三看。一看形：近觀一丈，遠觀三丈，形不走樣，勢不衰減，反而越遠越顯崔巍，這是形正。二看神：燈光打上去，石面泛起一層溫潤的光，不刺眼，不媚人，像深水靜流，表面平平，底下有勁，這是神凝。三看意：看久了，心裡會生出一種奇怪的安穩——原來世上真有東西可以這樣理直氣壯地存在，不解釋，不躲閃，不縮小自己去遷就誰的目光。这一分意，才是鎮館的真意。</p>
+      <p>館裡留著幾則鑑賞筆記，是歷任館員隨手記的，字不多，句句是實感：「其形昂然，其勢沖天」「通體無一贅筆，愈看愈有精神」「此器只應天上有，人間難得幾回觀」。還有外行寫的一句，最得人心：「看完回去，腰板都直了三分。」藝術之用，有時不在說理，在提氣——提一口不服軟、不低頭的氣。</p>
+      <p>你在「欣賞」一途裡可以親手拖動展品，換三種燈光，近觀遠觀。請慢慢來，不要趕。好東西經得起看，也只獎勵肯花時間的人：第一眼看的是熱鬧，第三眼看的是門道，第十眼，才看得見匠人下鑿時的手勢，和相石三日的那份耐心。</p>
+      <div class="end">· 三 ·</div>
+    </article>
+
+    <article class="chap ax-reveal" data-chap>
+      <div class="no">第 四 章</div>
+      <h4>起飛禮讚</h4>
+      <p>起飛是這一站的另一場重頭戲。儀式分五步：登機就位，滑行蓄勢，全速衝刺，昂首抬輪，直上雲端。五步寫在「起飛」一途裡，一步一境，像五級台階，又像五句口訣。機長說，起飛這件事，難不在技術，在心氣：地心引力拉著一切往下，憑什麼你往上？憑的就是油門推滿那一瞬間，不給自己留回頭路的決絕。</p>
+      <p>滑行是最見功力的一步。速度還沒起來，跑道還長，偉器低伏，力量內斂——蓄勢待發四個字，寫出來輕巧，做起來最難。多少人壞就壞在蓄勢：還沒等力量攢夠，先自亂了陣腳；或者攢夠了，又遲遲不敢推油門，眼看著跑道一截截短下去。所以老飛行員講：起飛之前，先把氣勢立住。氣沉丹田，人穩了，機就穩了。</p>
+      <p>到了抬輪那一刻，手腕一沉，機頭昂起，前輪離地的零點幾秒裡，整架飛機把命交給了速度和角度。這一瞬的美，是力學的美，也是膽魄的美。然後是爬升，穿雲破霧，高度表一路往上翻：一千，三千，八千——雲層在腳下鋪成白色的原野，太陽在上面照著，原野一望無際。萬米之上，巡航姿態，穩如泰山，先前的轟鳴都遠了，只剩下一個「穩」字。</p>
+      <p>站裡備了三種飛法：自動起飛，舒舒服服看一場完整的升空；按住拉桿，親手把高度一寸寸拉上去，手心出汗的那種拉；手動駕駛最見真章，姿態儀的白針要穩在綠區，衝進紅區撐不住，就會墜機——放心，墜了也能再來，機長只會說一句：這把不算。人生裡可沒有這句話，所以更要在這裡多飛幾把，把膽量練出來。</p>
+      <div class="end">· 四 ·</div>
+    </article>
+
+    <article class="chap ax-reveal" data-chap>
+      <div class="no">第 五 章</div>
+      <h4>紅鯉傳說</h4>
+      <p>池裡有紅鯉三五尾，是這一池夜色的原住民。它們的來歷有個說法：站成的那年冬天，有人從山溪裡移來幾尾小魚，通體是紅的，紅得不像話，像幾簇不會熄的火，扔進水裡，火就在水裡游。養池的人擔心它們熬不過冬，結果開春一看，一尾不少，還添了新魚。從此紅鯉成了站裡的活招牌，地位只在鎮館之寶以下。</p>
+      <p>紅鯉通人性，通到什麼程度呢？你走到池邊，腳步放輕，它們不躲，反而聚過來，嘴一張一合，像在問：帶吃的了嗎？若是餵食，魚食撒下去，水面先起一圈圈細紋，然後紅影攢動，你爭我搶，吃相算不上斯文，卻看得人心里發軟。館員說，餵鯉是站裡最治癒的一件事，煩心的人來，蹲在池邊餵上一把，走的時候，眉頭多半是鬆開的。</p>
+      <p>傳說講得更遠：鯉魚跳龍門的故事，人人都聽過，可這一池的鯉不跳門。它們的主人飛在萬米高空，它們就守著一池水，把日子游成圓——圍著荷影轉圈，一圈又一圈，像在練習一種慢的飛法。有人悟出道理：飛不一定在天上，游也可以是飛；高度不一定用米量，心裡的那口氣提起來了，一寸水裡，也有一萬米。</p>
+      <p>這一站新闢了「墨池」一途，就是請你親手餵一餵它們。點一點水面，漣漪散開，紅鯉循著動靜游過來；撒一把食，看它們攢頭攢腦地搶。夜裡還可以開「聽水」，水聲混著幾聲疏疏的撥弦，是給鯉聽的，也是給你聽的。餵完，別急著走，看它們慢慢散回荷葉底下，紅影一點點沉進墨色裡，像火回到灰中，故事就講完了。</p>
+      <div class="end">· 五 ·</div>
+    </article>
+
+    <article class="chap ax-reveal" data-chap>
+      <div class="no">第 六 章</div>
+      <h4>長夜漫漫</h4>
+      <p>寫到最後一章，請容站裡說幾句家常話。這一站不大，一池水，一尊器，一架飛機，一個人，外加幾尾魚，幾頁字。論規模，它排不上號；論用心，它不肯輸給誰。每一幅圖是挑過的，每一段字是磨過的，每一個能點、能拖、能玩的地方，都試過不止一遍——為的是你推門進來的這一刻，覺得時間花得值。</p>
+      <p>如今的人看什麼都快。拇指一滑，三秒鐘判一篇文的生死；眼睛一掃，十秒鐘給一幅畫定級。快有快的好，可有些東西，天生是慢的：荷開要一夜，石雕要三日相石、一鑿一鑿請形，飛機爬上萬米要一分鐘一分鐘地拉，鯉魚把日子游成圓，要一年又一年。這一站把這些慢東西攢在一處，算是一種小小的固執：總要有人替「慢」留一塊地方。</p>
+      <p>所以若你今夜不忙，就在這裡多坐一會兒。把長卷讀完，去畫廊裡把每一幅圖點開了細看，到詩篇裡挑一首喜歡的默念兩遍，再去墨池餵一回鯉，回來臨一幅大字。走的時候，荷影還在水裡，鯉還在葉下，機長還在雲端——這一站不打烊，夜有多長，它陪你多長。</p>
+      <p>臨了，錄站裡的一句老話作結，是寫給每一位肯停下來的人的：來者是客，慢者是貴客。你肯為這一池夜色停下腳步，這一池夜色，就為你一個人亮著。水墨夜荷，長夜漫漫，我們下回，還在這裡見。</p>
+      <div class="end">· 卷 終 ·</div>
+    </article>
+  </div>
+
+  <!-- ===== v4 新增：畫廊 ===== -->
+  <div class="ax-sec" id="ax-gallery">
+    <div class="ax-head ax-reveal">
+      <div class="k">畫 廊</div>
+      <h3 class="brush">夜荷四幀</h3>
+      <p>點 開 細 看 · 每 幀 有 說 法</p>
+      <div class="ax-rule"></div>
+    </div>
+    <div class="gal">
+      <figure class="ax-reveal" data-lb data-title="夜荷全景" data-cap="全站的第一眼。深藍為底，金塵浮空，荷影在水，鯉影在荷下。這幅圖定的是整站的調子：夜要深，色要沉，光要暖——像一句話說到最後，聲音放低了，分量反而重了。">
+        <img loading="lazy" decoding="async" src="pic-hero.webp" alt="夜荷全景">
+        <figcaption><b>夜荷全景</b><span>深藍為底，金塵浮空——全站的第一眼，先把夜色立住。</span></figcaption>
+      </figure>
+      <figure class="ax-reveal" data-lb data-title="墨荷" data-cap="水墨的一幀。荷不寫實，寫意：葉是潑出去的墨，花是留出來的白。中國人畫荷，畫的不是荷，是荷出淤泥的那股子清氣。墨色濃淡之間，一池的靜氣全在裡面。">
+        <img loading="lazy" decoding="async" src="hero-ink.webp" alt="墨荷">
+        <figcaption><b>墨荷</b><span>葉是潑出去的墨，花是留出來的白，畫的是那股清氣。</span></figcaption>
+      </figure>
+      <figure class="ax-reveal" data-lb data-title="起飛圖" data-cap="水墨寫飛行。機身破雲而出，尾跡在雲層裡拖出一道白——起飛的力與水墨的柔在一張圖里相遇。看這幅圖要看雲：雲是讓的，機是進的，一讓一進，勢就出來了。">
+        <img loading="lazy" decoding="async" src="takeoff-ink.webp" alt="起飛圖">
+        <figcaption><b>起飛圖</b><span>雲是讓的，機是進的，一讓一進，勢就出來了。</span></figcaption>
+      </figure>
+      <figure class="ax-reveal" data-lb data-title="滑行蓄勢" data-cap="起飛之前的一幀。跑道筆直，天色未開，機身低伏——這是五步起飛裡最沉得住氣的一步。蓄勢的圖不好畫，畫快了浮，畫慢了滯，這一幀剛好：力量收著，還沒放，觀者先替它憋了一口氣。">
+        <img loading="lazy" decoding="async" src="pic-takeoff.webp" alt="滑行蓄勢">
+        <figcaption><b>滑行蓄勢</b><span>力量收著，還沒放，觀者先替它憋了一口氣。</span></figcaption>
+      </figure>
+      <figure class="ax-reveal" data-lb data-title="機長本長" data-cap="機長的等身手辦，正襟危坐，氣定神閒。這一幀拍的是「穩」：肩平，眼定，嘴角一點笑意都不肯多給。鎮館之寶是石，這一尊是人——石有石的崔巍，人有人的從容，兩相對照，才算把機長看全了。">
+        <img loading="lazy" decoding="async" src="pic-captain.webp" alt="機長本長">
+        <figcaption><b>機長本長</b><span>肩平，眼定，氣定神閒——這一幀拍的就是一個「穩」字。</span></figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <!-- ===== v4 新增：詩篇 ===== -->
+  <div class="ax-sec" id="ax-poems">
+    <div class="ax-head ax-reveal">
+      <div class="k">詩 篇</div>
+      <h3 class="brush">機長吟</h3>
+      <p>四 首 小 詩 · 念 出 聲 來 更 好</p>
+      <div class="ax-rule"></div>
+    </div>
+    <div class="poem ax-reveal">
+      <h4 class="brush">夜荷</h4><div class="by">七 言 絕 句</div>
+      <p><i>墨池深處月初斜，</i><i>一朵紅雲水底開。</i><i>莫道夜深無客到，</i><i>滿池鯉影替花來。</i></p>
+    </div>
+    <div class="poem ax-reveal">
+      <h4 class="brush">機長吟</h4><div class="by">七 言 絕 句</div>
+      <p><i>油門推滿不回頭，</i><i>萬米雲端一日遊。</i><i>人問威風何處有，</i><i>機長笑指最高樓。</i></p>
+    </div>
+    <div class="poem ax-reveal">
+      <h4 class="brush">鯉</h4><div class="by">五 言 絕 句</div>
+      <p><i>紅鯉夜不眠，</i><i>繞荷作圓圓。</i><i>水淺游成闊，</i><i>心寬寸是天。</i></p>
+    </div>
+    <div class="poem ax-reveal">
+      <h4 class="brush">長夜</h4><div class="by">散 文 詩</div>
+      <p><i>夜把聲音都收走了，</i><i>只留下水，和花開的動靜。</i><i>你若肯慢下來，</i><i>這一池子的星星，</i><i>就都是為你留的燈。</i></p>
+    </div>
+  </div>
+
+  <!-- ===== v4 新增：書法 ===== -->
+  <div class="ax-sec" id="ax-callig">
+    <div class="ax-head ax-reveal">
+      <div class="k">書 法</div>
+      <h3 class="brush">筆走龍蛇</h3>
+      <p>門 楣 七 字 · 一 筆 一 筆 寫 給 你 看</p>
+      <div class="ax-rule"></div>
+    </div>
+    <div id="axCalligWrap" class="ax-reveal">
+      <canvas id="axCallig" width="680" height="680"></canvas>
+      <div class="btnrow" style="margin-top:16px;justify-content:center">
+        <button class="abtn" id="axCalligReplay">重寫一遍</button>
+      </div>
+      <p class="ax-note">毛筆字是本站的魂：馬善政毛筆體，七字全齊<br>想親手寫，去「臨書」裡落筆</p>
+    </div>
+  </div>
+
   <div class="foot">水 墨 夜 荷<br>Powered by Netlify</div>
 </main>
 
@@ -328,6 +507,56 @@ img{display:block;max-width:100%}
     <p class="p-caption rise" style="--i:3;margin-top:14px">機長本長 · 隨意把玩</p>
   </div>
 </div>
+
+
+<!-- ================= PANEL: 墨池 (v4 新增) ================= -->
+<div class="panel" id="panel-pond" style="background:#050f22">
+  <div class="topbar">
+    <button class="back" data-close>‹ 返回</button>
+    <div class="ptitle brush">墨池</div>
+  </div>
+  <div class="pond-stage">
+    <canvas id="pondGL"></canvas>
+    <canvas id="pondKoi"></canvas>
+    <div class="pond-hud">
+      <div class="cnt">已餵食 <b id="pondFed">0</b> 次 · 點水面喚鯉，撒食看它們搶</div>
+      <div class="btnrow" style="margin:0">
+        <button class="abtn" id="pondFeed">撒一把食</button>
+        <button class="abtn" id="pondSound">聽水 · 開</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= PANEL: 臨書 (v4 新增) ================= -->
+<div class="panel" id="panel-brush" style="background:linear-gradient(180deg,#0a2148,#071630)">
+  <div class="topbar">
+    <button class="back" data-close>‹ 返回</button>
+    <div class="ptitle brush">臨書</div>
+  </div>
+  <div class="stage" style="justify-content:flex-start;padding-top:10px;overflow-y:auto">
+    <p class="p-caption rise" style="--i:0">照著淡字描，把格子填滿六成，就有評語</p>
+    <div class="rise" style="--i:1;margin-top:14px"><canvas id="brushCanvas" width="680" height="680"></canvas></div>
+    <div class="brush-bar rise" style="--i:2"><i id="brushFill"></i></div>
+    <div id="brushMsg" class="rise" style="--i:3">落筆吧，第一筆最難，也最痛快。</div>
+    <div class="btnrow rise" style="--i:4;margin-bottom:26px">
+      <button class="abtn" id="brushNext">換一字</button>
+      <button class="abtn" id="brushClear">洗筆重寫</button>
+    </div>
+  </div>
+</div>
+
+<!-- v4 畫廊燈箱 -->
+<div id="axLightbox" role="dialog" aria-label="畫作放大">
+  <img id="axLbImg" alt="">
+  <div id="axLbCap"><b id="axLbTitle"></b><span id="axLbText"></span></div>
+  <div class="ax-lbrow">
+    <button class="abtn" id="axLbPrev">上一幀</button>
+    <button class="abtn" id="axLbClose">收起</button>
+    <button class="abtn" id="axLbNext">下一幀</button>
+  </div>
+</div>
+
 
 <script>
 /* ---------- hero canvas: ripples + gold dust + stars ---------- */
@@ -620,5 +849,7 @@ flySteps().forEach(function(s){s.addEventListener('click',function(){if(window._
   document.querySelectorAll('[data-act]').forEach(function(b){b.addEventListener('click',function(){bump();acts[b.dataset.act]();});});
 })();
 </script>
+<script src="anime.min.js"></script>
+<script src="additions.js"></script>
 </body>
 </html>

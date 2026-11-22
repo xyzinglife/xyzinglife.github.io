@@ -1,0 +1,49 @@
+/* ===== v4 additions: appended only, original styles untouched ===== */
+.ax-cards{margin-top:26px}
+.ax-sec{max-width:520px;margin:64px auto 0;padding:0 6px}
+.ax-head{text-align:center;margin-bottom:30px}
+.ax-head .k{font-size:12px;letter-spacing:.5em;text-indent:.5em;color:var(--gold)}
+.ax-head h3{font-size:34px;color:var(--paper);letter-spacing:.1em;margin-top:10px}
+.ax-head p{margin-top:9px;color:var(--paper-dim);font-size:13px;letter-spacing:.26em;text-indent:.26em}
+.ax-rule{width:54px;height:1px;background:var(--gold-soft);margin:16px auto 0}
+.ax-reveal{opacity:0}
+.ax-prog{height:3px;background:rgba(246,240,225,.12);border-radius:2px;overflow:hidden;margin:0 auto 26px;max-width:520px}
+.ax-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--verm));border-radius:2px}
+.chap{border:1px solid rgba(217,169,79,.22);border-radius:16px;background:rgba(9,24,52,.45);padding:24px 22px 20px;margin-bottom:20px}
+.chap .no{font-size:12px;letter-spacing:.4em;color:var(--gold)}
+.chap h4{font-size:23px;letter-spacing:.12em;color:#fff;margin:9px 0 13px;font-weight:600}
+.chap p{font-size:15.5px;line-height:2.05;color:var(--paper);margin-bottom:11px;text-align:justify}
+.chap p:last-child{margin-bottom:0}
+.chap .end{text-align:center;color:var(--gold);letter-spacing:.5em;text-indent:.5em;font-size:12px;margin-top:6px}
+.chap.read{border-color:var(--gold-soft)}
+.gal{display:grid;gap:22px}
+.gal figure{border:1px solid rgba(217,169,79,.25);border-radius:16px;overflow:hidden;background:#0d2650;cursor:zoom-in}
+.gal img{width:100%;display:block;aspect-ratio:4/3;object-fit:cover}
+.gal figcaption{padding:16px 18px 15px}
+.gal figcaption b{display:block;font-size:17px;letter-spacing:.14em;color:#fff;font-weight:600}
+.gal figcaption span{display:block;margin-top:7px;font-size:13.5px;line-height:1.95;color:var(--paper-dim)}
+.poem{text-align:center;padding:26px 14px 22px;border:1px solid rgba(217,169,79,.22);border-radius:16px;background:rgba(9,24,52,.45);margin-bottom:20px}
+.poem h4{font-size:21px;letter-spacing:.3em;text-indent:.3em;color:var(--gold);font-weight:600}
+.poem .by{margin-top:6px;font-size:12px;letter-spacing:.3em;text-indent:.3em;color:var(--paper-dim)}
+.poem p{margin-top:15px;font-size:16.5px;line-height:2.2;letter-spacing:.12em;color:var(--paper)}
+.poem p i{font-style:normal;display:block}
+#axLightbox{position:fixed;inset:0;z-index:90;background:rgba(3,8,20,.94);display:none;flex-direction:column;align-items:center;justify-content:center;padding:22px;backdrop-filter:blur(4px)}
+#axLightbox.show{display:flex}
+#axLightbox img{max-width:94vw;max-height:62vh;border-radius:14px;border:1px solid var(--gold-soft);box-shadow:0 30px 60px rgba(0,0,0,.6)}
+#axLbCap{max-width:520px;text-align:center;margin-top:18px}
+#axLbCap b{display:block;font-size:19px;letter-spacing:.16em;color:#fff}
+#axLbCap span{display:block;margin-top:8px;font-size:14px;line-height:2;color:var(--paper-dim)}
+.ax-lbrow{display:flex;gap:12px;margin-top:20px}
+#axCalligWrap{text-align:center}
+#axCallig{width:min(86vw,340px);height:min(86vw,340px);border:1px solid rgba(217,169,79,.3);border-radius:16px;background:radial-gradient(120% 100% at 50% 0%,#10294f,#081831);touch-action:none}
+.ax-note{margin-top:14px;color:var(--paper-dim);font-size:13px;letter-spacing:.2em;line-height:2}
+.pond-stage{position:relative;flex:1;overflow:hidden}
+#pondGL,#pondKoi{position:absolute;inset:0;width:100%;height:100%;display:block}
+#pondKoi{touch-action:none}
+.pond-hud{position:absolute;left:0;right:0;bottom:0;padding:14px 16px calc(14px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(180deg,transparent,rgba(4,10,24,.75) 40%);z-index:5}
+.pond-hud .cnt{color:var(--paper-dim);font-size:13px;letter-spacing:.24em}
+.pond-hud .cnt b{color:var(--gold);font-size:16px}
+#brushCanvas{width:min(86vw,340px);height:min(86vw,340px);border-radius:16px;border:1px solid rgba(217,169,79,.3);background:#0a1c3c;touch-action:none;cursor:crosshair}
+.brush-bar{width:min(86vw,340px);height:8px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden;margin-top:14px}
+.brush-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--verm))}
+#brushMsg{min-height:30px;margin-top:12px;color:var(--gold);font-size:15px;letter-spacing:.18em;line-height:1.9;text-align:center;padding:0 18px}
