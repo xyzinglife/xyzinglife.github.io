@@ -1,0 +1,477 @@
+import canvasScreenshot from "canvas-screenshot";
+
+import WebCodecsEncoder from "./crec-WebCodecsEncoder.js";
+import H264MP4Encoder from "./crec-H264MP4Encoder.js";
+import GIFEncoder from "./crec-GIFEncoder.js";
+import FrameEncoder from "./crec-FrameEncoder.js";
+
+import {
+  downloadBlob,
+  formatDate,
+  formatSeconds,
+  isWebCodecsSupported,
+  nextMultiple,
+  captureCanvasRegion,
+  ensureExtension,
+} from "./crec-utils.js";
+
+/**
+ * Enum for recorder status
+ *
+ * @example
+ *
+ * ```js
+ * // Check recorder status before continuing
+ * if (canvasRecorder.status !== RecorderStatus.Stopped) {
+ *   rAFId = requestAnimationFrame(() => tick());
+ * }
+ * ```
+ *
+ * @readonly
+ * @enum {number}
+ */
+const RecorderStatus = Object.freeze({
+  Ready: 0,
+  Initializing: 1,
+  Initialized: 2,
+  Recording: 3,
+  Stopping: 4,
+  Stopped: 5,
+});
+
+/**
+ * A callback to notify on the status change. To compare with RecorderStatus
+ * enum values.
+ *
+ * @callback onStatusChangeCb
+ * @param {number} RecorderStatus The status
+ */
+
+/**
+ * A callback to notify on a non-fatal error (eg. a single frame failing to
+ * write or a temporary file failing to clean up). Fatal setup errors reject
+ * `start()` instead.
+ *
+ * @callback onErrorCb
+ * @param {Error} error
+ */
+
+/**
+ * @typedef {object} RecorderOptions Options for recording. All optional.
+ * @property {string} [name=""] A name for the recorder, used as prefix for the
+ *   default file name.
+ * @property {number} [duration=10] The recording duration in seconds. If set to
+ *   Infinity, `await canvasRecorder.stop()` needs to be called manually.
+ * @property {number} [frameRate=30] The frame rate in frame per seconds. Use
+ *   `await canvasRecorder.step();` to go to the next frame.
+ * @property {Array} [rect=[]] Sub-region [x, y, width, height] of the canvas to
+ *   encode from bottom left. Default to 0, 0 and
+ *   context.drawingBufferWidth/drawingBufferHeight or canvas.width/height.
+ * @property {boolean} [download=true] Automatically download the recording when
+ *   duration is reached or when `await canvasRecorder.stop()` is manually
+ *   called.
+ * @property {string} [extension="mp4"] Default file extension: infers which
+ *   Encoder is selected.
+ * @property {string} [target="in-browser"] Default writing target: in-browser
+ *   or file-system when available.
+ * @property {object} [encoder] A specific encoder. Default encoder based on
+ *   options.extension: GIF > WebCodecs > H264MP4.
+ * @property {object} [encoderOptions] See `src/encoders` or individual packages
+ *   for a list of options.
+ * @property {object} [muxerOptions] See "mediabunny" for a list of options.
+ * @property {object} [frameOptions] Options for createImageBitmap(),
+ *   VideoFrame, getImageData() or canvas-screenshot.
+ * @property {onStatusChangeCb} [onStatusChange]
+ * @property {onErrorCb} [onError=console.error] Called with non-fatal errors
+ *   that don't abort the recording. Fatal setup errors reject `start()`
+ *   instead.
+ */
+
+/**
+ * @typedef {object} RecorderStartOptions Options for recording initialisation.
+ *   All optional.
+ * @property {string} [filename] Overwrite the file name completely.
+ * @property {boolean} [initOnly] Only initialised the recorder and don't call
+ *   the first await recorder.step().
+ */
+
+class Recorder {
+  /**
+   * Sensible defaults for recording so that the recorder "just works".
+   *
+   * @type {RecorderOptions}
+   */
+  static defaultOptions = {
+    name: "",
+    duration: 10, // 0 to Infinity
+    frameRate: 30,
+    rect: [],
+    download: true,
+    extension: "mp4",
+    target: "in-browser",
+    onStatusChange: () => {},
+    onError: console.error,
+  };
+
+  /**
+   * A mapping of extension to their mime types
+   *
+   * @type {object}
+   */
+  static mimeTypes = {
+    mkv: "video/x-matroska;codecs=avc1",
+    mov: "video/quicktime",
+    webm: "video/webm",
+    mp4: "video/mp4",
+    gif: "image/gif",
+    zip: "application/zip",
+  };
+
+  set width(value) {
+    this.encoder.width = value;
+  }
+  set height(value) {
+    this.encoder.height = value;
+  }
+
+  get x() {
+    return this.rect[0] ?? 0;
+  }
+  get y() {
+    return this.rect[1] ?? 0;
+  }
+  // Only used if rect is defined
+  get yFlipped() {
+    return this.canvasHeight - this.y - this.height;
+  }
+  get width() {
+    return this.rect[2] ?? this.canvasWidth;
+  }
+  get height() {
+    return this.rect[3] ?? this.canvasHeight;
+  }
+  get canvasWidth() {
+    return this.context.drawingBufferWidth ?? this.context.canvas.width;
+  }
+  get canvasHeight() {
+    return this.context.drawingBufferHeight ?? this.context.canvas.height;
+  }
+
+  get stats() {
+    // eslint-disable-next-line unicorn/no-useless-undefined -- getter-return requires an explicit value
+    if (this.status !== RecorderStatus.Recording) return undefined;
+
+    const renderTime = (Date.now() - this.startTime.getTime()) / 1000;
+    const secondsPerFrame = renderTime / this.frame;
+
+    return {
+      renderTime,
+      secondsPerFrame,
+      detail: `Time: ${this.time.toFixed(2)} / ${this.duration.toFixed(2)}
+Frame: ${this.frame} / ${this.frameTotal}
+Elapsed Time: ${formatSeconds(renderTime)}
+Remaining Time: ${formatSeconds(secondsPerFrame * this.frameTotal - renderTime)}
+Speedup: x${(this.time / renderTime).toFixed(3)}`,
+    };
+  }
+
+  #updateStatus(status) {
+    this.status = status;
+    this.onStatusChange(this.status);
+  }
+
+  getParamString() {
+    return `${this.width}x${this.height}@${this.frameRate}fps`;
+  }
+
+  getDefaultFileName(extension) {
+    return `${[this.name, formatDate(this.startTime), this.getParamString()]
+      .filter(Boolean)
+      .join("-")}.${extension}`;
+  }
+
+  getSupportedExtension() {
+    const CurrentEncoder = this.encoder.constructor;
+    const isExtensionSupported = CurrentEncoder.supportedExtensions.includes(
+      this.extension,
+    );
+    const extension = isExtensionSupported
+      ? this.extension
+      : CurrentEncoder.supportedExtensions[0];
+
+    if (!isExtensionSupported) {
+      console.warn(
+        `canvas-record: unsupported extension for encoder "${CurrentEncoder.name}". Defaulting to "${extension}".`,
+      );
+    }
+    return extension;
+  }
+
+  getSupportedTarget() {
+    const CurrentEncoder = this.encoder.constructor;
+    let isTargetSupported = CurrentEncoder.supportedTargets.includes(
+      this.target,
+    );
+
+    if (
+      this.target === "file-system" &&
+      !("showSaveFilePicker" in globalThis)
+    ) {
+      isTargetSupported = false;
+    }
+
+    const target = isTargetSupported
+      ? this.target
+      : CurrentEncoder.supportedTargets[0];
+
+    if (!isTargetSupported) {
+      console.warn(
+        `canvas-record: unsupported target for encoder "${CurrentEncoder.name}". Defaulting to "${target}".`,
+      );
+    }
+    return target;
+  }
+
+  /**
+   * Create a Recorder instance
+   *
+   * @class Recorder
+   * @param {RenderingContext} context
+   * @param {RecorderOptions} [options={}]
+   */
+  constructor(context, options = {}) {
+    this.context = context;
+
+    const opts = { ...Recorder.defaultOptions, ...options };
+    Object.assign(this, opts);
+
+    if (!this.encoder) {
+      if (this.extension === "gif") {
+        this.encoder = new GIFEncoder(opts);
+      } else if (["png", "jpg", "zip"].includes(this.extension)) {
+        this.encoder = new FrameEncoder(opts);
+      } else {
+        this.encoder = isWebCodecsSupported
+          ? new WebCodecsEncoder(opts)
+          : new H264MP4Encoder(opts);
+      }
+    }
+
+    this.is2D = context instanceof CanvasRenderingContext2D;
+    this.#updateStatus(RecorderStatus.Ready);
+  }
+
+  /**
+   * Sets up the recorder internals and the encoder depending on supported
+   * features.
+   *
+   * @private
+   */
+  async init({ filename } = {}) {
+    this.#updateStatus(RecorderStatus.Initializing);
+
+    try {
+      this.deltaTime = 1 / this.frameRate;
+      this.time = 0;
+      this.frame = 0;
+      this.frameTotal = this.duration * this.frameRate;
+
+      const extension = this.getSupportedExtension();
+      const target = this.getSupportedTarget();
+
+      this.startTime = new Date();
+      this.filename = filename
+        ? ensureExtension(filename, extension)
+        : this.getDefaultFileName(extension);
+
+      await this.encoder.init({
+        encoderOptions: this.encoderOptions,
+        muxerOptions: this.muxerOptions,
+        canvas: this.context.canvas,
+        width: this.width,
+        height: this.height,
+        frameRate: this.frameRate,
+        extension,
+        target,
+        mimeType: Recorder.mimeTypes[extension],
+        filename: this.filename,
+        debug: this.debug,
+        onError: this.onError,
+      });
+
+      this.#updateStatus(RecorderStatus.Initialized);
+    } catch (error) {
+      this.#updateStatus(RecorderStatus.Ready);
+      throw error;
+    }
+  }
+
+  /**
+   * Start the recording by initializing and optionally calling the initial
+   * step.
+   *
+   * @param {RecorderStartOptions} [startOptions={}]
+   */
+  async start(startOptions = {}) {
+    await this.init(startOptions);
+
+    this.#updateStatus(RecorderStatus.Recording);
+
+    if (!startOptions.initOnly) await this.step();
+  }
+
+  /**
+   * Convert the context into something encodable (bitmap, blob, buffer...)
+   *
+   * @private
+   */
+  async getFrame(frameMethod) {
+    switch (frameMethod) {
+      case "bitmap": {
+        return this.rect.length
+          ? await createImageBitmap(
+              this.context.canvas,
+              this.x,
+              this.yFlipped,
+              this.width,
+              this.height,
+              this.frameOptions,
+            )
+          : await createImageBitmap(this.context.canvas, this.frameOptions);
+      }
+      case "videoFrame": {
+        let { canvas } = this.context;
+
+        // Note: visibleRect doesn't crop in WebGL so we need to capture
+        let visibleRect;
+        if (this.rect.length) {
+          const { x, yFlipped: y, width, height } = this;
+
+          if (this.is2D) {
+            visibleRect = { x, y, width, height };
+          } else {
+            canvas = captureCanvasRegion(canvas, x, y, width, height);
+          }
+        }
+
+        return new VideoFrame(canvas, {
+          timestamp: this.time * 1_000_000, // in µs
+          duration: 1_000_000 / this.frameRate,
+          visibleRect,
+          alpha: this.encoder.alpha,
+          ...this.frameOptions,
+        });
+      }
+      case "requestFrame": {
+        return;
+      }
+      case "imageData": {
+        const width = nextMultiple(this.width, 2);
+        const height = nextMultiple(this.height, 2);
+
+        if (!this.is2D) {
+          const length = width * height * 4;
+          const pixels = new Uint8Array(length);
+          const pixelsFlipped = new Uint8Array(length);
+
+          this.context.readPixels(
+            this.x,
+            this.y,
+            width,
+            height,
+            this.context.RGBA,
+            this.context.UNSIGNED_BYTE,
+            pixels,
+          );
+
+          // Flip vertically
+          const row = width * 4;
+          const end = (height - 1) * row;
+          for (let i = 0; i < length; i += row) {
+            pixelsFlipped.set(pixels.subarray(i, i + row), end - i);
+          }
+
+          return pixelsFlipped;
+        }
+
+        return this.context.getImageData(
+          this.x,
+          this.yFlipped,
+          width,
+          height,
+          this.frameOptions,
+        ).data;
+      }
+      default: {
+        const canvas = this.rect.length
+          ? captureCanvasRegion(
+              this.context.canvas,
+              this.x,
+              this.yFlipped,
+              this.width,
+              this.height,
+            )
+          : this.context.canvas;
+        return await canvasScreenshot(canvas, {
+          useBlob: true,
+          download: false,
+          filename: `output.${this.encoder.extension}`,
+          ...this.frameOptions,
+        });
+      }
+    }
+  }
+
+  /**
+   * Encode a frame and increment the time and the playhead. Calls `await
+   * canvasRecorder.stop()` when duration is reached.
+   */
+  async step() {
+    if (
+      this.status === RecorderStatus.Recording &&
+      this.frame < this.frameTotal
+    ) {
+      await this.encoder.encode(
+        await this.getFrame(this.encoder.frameMethod),
+        this.frame,
+      );
+      this.time += this.deltaTime;
+      this.frame++;
+    } else {
+      await this.stop();
+    }
+  }
+
+  /**
+   * Stop the recording and return the recorded buffer. If options.download is
+   * set, automatically start downloading the resulting file. Is called when
+   * duration is reached or manually.
+   *
+   * @returns {ArrayBuffer | Uint8Array | Blob[] | undefined}
+   */
+  async stop() {
+    if (this.status !== RecorderStatus.Recording) return;
+
+    this.#updateStatus(RecorderStatus.Stopping);
+
+    const buffer = await this.encoder.stop();
+
+    if (this.download && buffer) {
+      downloadBlob(
+        this.filename,
+        Array.isArray(buffer) ? buffer : [buffer],
+        this.encoder.mimeType,
+      );
+    }
+    this.#updateStatus(RecorderStatus.Stopped);
+
+    return buffer;
+  }
+
+  /** Clean up the recorder and encoder */
+  async dispose() {
+    await this.encoder.dispose();
+  }
+}
+
+export { Recorder, RecorderStatus };

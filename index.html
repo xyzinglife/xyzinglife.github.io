@@ -102,6 +102,25 @@ img{display:block;max-width:100%}
 @keyframes moteFloat{from{transform:translateY(12px);opacity:0}18%{opacity:.9}82%{opacity:.7}to{transform:translateY(-120px);opacity:0}}
 <link rel="stylesheet" href="additions.css">
 </style>
+<script type="importmap">
+{"imports":{
+"three":"./three.module.js",
+"three-mesh-bvh":"./bvh.module.js",
+"maath":"./maath.esm.js",
+"troika-three-text":"./troika-text.esm.js",
+"troika-three-utils":"./troika-utils.esm.js",
+"troika-worker-utils":"./troika-worker.esm.js",
+"webgl-sdf-generator":"./wsg.mjs",
+"bidi-js":"./bidi.mjs",
+"pixi.js":"./pixi.min.mjs",
+"pixi-ease":"./pixi-ease.es.js",
+"pixi-viewport":"./pixi_viewport.js",
+"canvas-context":"./crec-canvas-context.js",
+"canvas-screenshot":"./crec-canvas-screenshot.js",
+"canvas-record":"./crec-entry.js",
+"file-extension":"./file-extension.js"
+}}
+</script>
 </head>
 <body>
 
@@ -208,6 +227,23 @@ img{display:block;max-width:100%}
     <section><h4>本 站</h4><p>鄧機長的雞巴大。水墨夜荷一池，紅鯉三五尾，藏機長偉器於雲端之上。</p></section>
     <section><h4>誌 事</h4><p>丙午年冬，站成於 Netlify，憑證自續，三十日不墜則不收。此頁為記。</p></section>
   </div>
+  <div class="cards ax-cards">
+    <button class="card reveal" data-scrollto="ax-3d">
+      <div class="thumb"><img class="ph" loading="lazy" decoding="async" src="fly-poster.webp" alt="雲端星河"></div>
+      <div class="body">
+        <div><h3 class="brush">雲端</h3><div class="sub">星河墨玉 · 親手轉天</div></div>
+        <span class="go"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 5l7 7-7 7" stroke="#d9a94f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+    </button>
+    <button class="card reveal" data-scrollto="ax-pixi">
+      <div class="thumb"><img class="ph" loading="lazy" decoding="async" src="pic-hero.webp" alt="金塵漫遊"></div>
+      <div class="body">
+        <div><h3 class="brush">金塵</h3><div class="sub">拖開長卷 · 指尖生星</div></div>
+        <span class="go"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 5l7 7-7 7" stroke="#d9a94f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+    </button>
+  </div>
+
   <!-- ===== v4 新增：長卷 ===== -->
   <div class="ax-sec" id="ax-scroll">
     <div class="ax-head ax-reveal">
@@ -308,7 +344,58 @@ img{display:block;max-width:100%}
         <img loading="lazy" decoding="async" src="pic-captain.webp" alt="機長本長">
         <figcaption><b>機長本長</b><span>肩平，眼定，氣定神閒——這一幀拍的就是一個「穩」字。</span></figcaption>
       </figure>
+      <figure class="ax-reveal">
+        <svg id="axInkSvg" viewBox="0 0 400 300" style="width:100%;display:block;aspect-ratio:4/3;background:radial-gradient(120% 100% at 50% 0%,#10294f,#081831)" role="img" aria-label="活墨荷花">
+          <defs>
+            <filter id="axInkFilter" x="-20%" y="-20%" width="140%" height="140%">
+              <feTurbulence id="axInkTurb" type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n"/>
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="14"/>
+            </filter>
+          </defs>
+          <g filter="url(#axInkFilter)">
+            <path d="M200 238 C 120 238 62 196 58 128 C 118 138 168 168 196 214 C 200 150 186 96 158 52 C 196 66 224 104 228 160 C 248 108 282 76 330 66 C 322 140 282 196 226 224 C 268 210 308 210 344 226 C 300 252 248 238 200 238 Z" fill="#1d4d33"/>
+            <path d="M200 236 C 196 190 200 150 214 116 C 228 148 232 192 224 234 Z" fill="#2a6b45"/>
+            <circle cx="200" cy="96" r="30" fill="#e88bb0"/>
+            <path d="M200 66 C 210 80 210 96 200 112 C 190 96 190 80 200 66Z" fill="#f6c9d8"/>
+            <circle cx="112" cy="252" r="7" fill="#e0492f"/>
+            <circle cx="292" cy="258" r="5" fill="#f7cf6b"/>
+          </g>
+        </svg>
+        <figcaption><b>活墨</b><span>這一幀是活的：墨色在水裡慢慢洇開，荷的輪廓一直在輕輕變——盯著看十秒，形狀就和剛才不一樣了。</span></figcaption>
+      </figure>
     </div>
+  </div>
+
+  <!-- ===== v4.2 新增：雲端 3D ===== -->
+  <div class="ax-sec" id="ax-3d">
+    <div class="ax-head ax-reveal">
+      <div class="k">雲 端</div>
+      <h3 class="brush">星河墨玉</h3>
+      <p>拖 動 轉 天 · 點 墨 玉 有 回 應</p>
+      <div class="ax-rule"></div>
+    </div>
+    <div class="ax-reveal" style="border:1px solid rgba(217,169,79,.25);border-radius:16px;overflow:hidden;background:#050f22">
+      <div id="ax3dBox" style="width:100%;height:380px;touch-action:none;position:relative">
+        <div id="ax3dTip" style="position:absolute;inset:0;display:grid;place-items:center;color:var(--paper-dim);letter-spacing:.3em;font-size:13px">星河載入中…</div>
+      </div>
+    </div>
+    <p class="ax-note" style="text-align:center">Three.js 即時渲染：兩千顆星塵、一塊墨玉、一行懸空的毛筆字<br>手指拖動可轉天，點中墨玉，它會亮給你看</p>
+  </div>
+
+  <!-- ===== v4.2 新增：金塵 Pixi ===== -->
+  <div class="ax-sec" id="ax-pixi">
+    <div class="ax-head ax-reveal">
+      <div class="k">金 塵</div>
+      <h3 class="brush">塵卷漫遊</h3>
+      <p>拖 開 長 卷 · 點 一 下 生 星</p>
+      <div class="ax-rule"></div>
+    </div>
+    <div class="ax-reveal" style="border:1px solid rgba(217,169,79,.25);border-radius:16px;overflow:hidden;background:#050f22">
+      <div id="axPixiBox" style="width:100%;height:240px;position:relative">
+        <div id="axPixiTip" style="position:absolute;inset:0;display:grid;place-items:center;color:var(--paper-dim);letter-spacing:.3em;font-size:13px">金塵載入中…</div>
+      </div>
+    </div>
+    <p class="ax-note" style="text-align:center">一幅兩千四百像素寬的金塵長卷，裝在小小的框裡<br>左右拖動漫遊，點任意處，星塵會彈開再聚回來</p>
   </div>
 
   <!-- ===== v4 新增：詩篇 ===== -->
@@ -520,9 +607,11 @@ img{display:block;max-width:100%}
     <canvas id="pondKoi"></canvas>
     <div class="pond-hud">
       <div class="cnt">已餵食 <b id="pondFed">0</b> 次 · 點水面喚鯉，撒食看它們搶</div>
+      <div class="cnt" id="pondRecOut" style="display:none"></div>
       <div class="btnrow" style="margin:0">
         <button class="abtn" id="pondFeed">撒一把食</button>
         <button class="abtn" id="pondSound">聽水 · 開</button>
+        <button class="abtn" id="pondRec">錄下這一池</button>
       </div>
     </div>
   </div>
@@ -536,7 +625,7 @@ img{display:block;max-width:100%}
   </div>
   <div class="stage" style="justify-content:flex-start;padding-top:10px;overflow-y:auto">
     <p class="p-caption rise" style="--i:0">照著淡字描，把格子填滿六成，就有評語</p>
-    <div class="rise" style="--i:1;margin-top:14px"><canvas id="brushCanvas" width="680" height="680"></canvas></div>
+    <div class="rise" style="--i:1;margin-top:14px"><div class="brush-stack"><canvas id="brushGuide" width="680" height="680"></canvas><canvas id="brushCanvas" width="680" height="680"></canvas></div></div>
     <div class="brush-bar rise" style="--i:2"><i id="brushFill"></i></div>
     <div class="brush-pct rise" style="--i:2" id="brushPct">描摹 0%</div>
     <div id="brushMsg" class="rise" style="--i:3">落筆吧，第一筆最難，也最痛快。</div>
@@ -850,7 +939,9 @@ flySteps().forEach(function(s){s.addEventListener('click',function(){if(window._
   document.querySelectorAll('[data-act]').forEach(function(b){b.addEventListener('click',function(){bump();acts[b.dataset.act]();});});
 })();
 </script>
+<script src="d3-interpolate.min.js"></script>
 <script src="anime.min.js"></script>
 <script src="additions.js"></script>
+<script type="module" src="additions2.js"></script>
 </body>
 </html>

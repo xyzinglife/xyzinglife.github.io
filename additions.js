@@ -115,7 +115,7 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
 (function(){
   var panel=document.getElementById('panel-pond'); if(!panel) return;
   var glCv=document.getElementById('pondGL'), koiCv=document.getElementById('pondKoi');
-  var gl=glCv.getContext('webgl')||glCv.getContext('experimental-webgl');
+  var gl=glCv.getContext('webgl',{preserveDrawingBuffer:true})||glCv.getContext('experimental-webgl',{preserveDrawingBuffer:true});
   var prog=null, uTime=null, uRip=null, uRes=null, startT=Date.now();
   var rips=[]; for(var i=0;i<12;i++) rips.push([9,9,-99]);
   var ripIdx=0;
@@ -123,7 +123,7 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
     var vs='attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
     var fs=[
       'precision highp float;',
-      'uniform float uT; uniform vec2 uR; uniform vec3 uRip[12];',
+      'uniform float uT; uniform vec2 uR; uniform vec3 uRip[12]; uniform vec3 uTint;',
       'float n2(vec2 q){return sin(q.x)*cos(q.y);}',
       'void main(){',
       ' vec2 uv=gl_FragCoord.xy/uR;',
@@ -138,7 +138,7 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
       ' col+=vec3(.45,.6,.85)*ring;',
       ' col+=vec3(.85,.68,.3)*pow(max(0.,w),3.)*.14;',
       ' float vig=smoothstep(1.25,.35,distance(uv,vec2(.5,.45)));',
-      ' gl_FragColor=vec4(col*vig,1.); }'
+      ' gl_FragColor=vec4(col*vig*uTint,1.); }'
     ].join('\n');
     function sh(type,src){ var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s; }
     prog=gl.createProgram();
@@ -149,6 +149,7 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
     gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
     var loc=gl.getAttribLocation(prog,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
     uTime=gl.getUniformLocation(prog,'uT'); uRip=gl.getUniformLocation(prog,'uRip'); uRes=gl.getUniformLocation(prog,'uR');
+    var uTint=gl.getUniformLocation(prog,'uTint');
   }
   function addRipple(nx,ny){
     rips[ripIdx]=[nx,ny,(Date.now()-startT)/1000]; ripIdx=(ripIdx+1)%12;
@@ -194,6 +195,10 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
     if(gl && prog){
       gl.useProgram(prog);
       gl.uniform1f(uTime,t);
+      if(uTint){ var tt=.5+.5*Math.sin(t*.07), rr=.82, gg=.9, bb=1.06;
+        if(window.d3 && d3.interpolateRgb){ var s=d3.interpolateRgb('rgb(209,230,255)','rgb(255,237,209)')(tt), n=s.match(/[\d.]+/g);
+          if(n){ rr=+n[0]/255; gg=+n[1]/255; bb=+n[2]/255; } }
+        gl.uniform3f(uTint,rr,gg,bb); }
       gl.uniform2f(uRes,glCv.width,glCv.height);
       var flat=[]; rips.forEach(function(r){ flat.push(r[0],r[1],r[2]); });
       gl.uniform3fv(uRip,new Float32Array(flat));
@@ -237,40 +242,73 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
     pluck(587); setTimeout(function(){pluck(880);},110);
   });
 
-  /* --- ambient sound: Web Audio water + pentatonic plucks --- */
+  /* --- ambient sound: Tone.js (lazy) water + pentatonic plucks, WebAudio fallback --- */
   var AC=null, soundOn=false, waterGain=null, ambTimer=null;
   var SCALE=[523.25,587.33,659.25,783.99,880.0];
+  var toneState='idle', toneWaiters=[], toneSynth=null, toneNoiseGain=null;
+  function loadTone(cb){
+    if(window.Tone){ cb(true); return; }
+    if(toneState==='failed'){ cb(false); return; }
+    toneWaiters.push(cb);
+    if(toneState==='loading') return;
+    toneState='loading';
+    var s=document.createElement('script'); s.src='tone.js';
+    s.onload=function(){ toneState='ready'; toneWaiters.forEach(function(f){f(true);}); toneWaiters=[]; };
+    s.onerror=function(){ toneState='failed'; toneWaiters.forEach(function(f){f(false);}); toneWaiters=[]; };
+    document.head.appendChild(s);
+  }
   function pluck(f){
-    if(!soundOn || !AC) return;
+    if(!soundOn) return;
+    if(toneSynth){ try{ toneSynth.triggerAttack(f); }catch(e){} return; }
+    if(!AC) return;
     var o=AC.createOscillator(), g=AC.createGain();
     o.type='triangle'; o.frequency.value=f;
     g.gain.setValueAtTime(.14,AC.currentTime);
     g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+1.1);
     o.connect(g); g.connect(AC.destination); o.start(); o.stop(AC.currentTime+1.15);
   }
+  function ambienceStart(){
+    clearInterval(ambTimer);
+    ambTimer=setInterval(function(){ if(soundOn && Math.random()<.75) pluck(SCALE[Math.floor(Math.random()*SCALE.length)]); },3600);
+  }
+  function initTone(){
+    Tone.start();
+    if(!toneSynth){
+      toneSynth=new Tone.PluckSynth({attackNoise:1.4,dampening:4000,resonance:.97});
+      toneSynth.volume.value=-10; toneSynth.toDestination();
+      var noise=new Tone.Noise('brown'); noise.start();
+      var filt=new Tone.Filter(380,'lowpass');
+      toneNoiseGain=new Tone.Gain(0);
+      noise.connect(filt); filt.connect(toneNoiseGain); toneNoiseGain.toDestination();
+    }
+    toneNoiseGain.gain.rampTo(.16,.9);
+    ambienceStart();
+  }
+  function initWA(){
+    if(!AC){
+      AC=new (window.AudioContext||window.webkitAudioContext)();
+      var len=2*AC.sampleRate, buf=AC.createBuffer(1,len,AC.sampleRate), d=buf.getChannelData(0), last=0;
+      for(var i=0;i<len;i++){ var w=Math.random()*2-1; last=(last+.02*w)/1.02; d[i]=last*3.2; }
+      var src=AC.createBufferSource(); src.buffer=buf; src.loop=true;
+      var f=AC.createBiquadFilter(); f.type='lowpass'; f.frequency.value=420;
+      waterGain=AC.createGain(); waterGain.gain.value=0;
+      src.connect(f); f.connect(waterGain); waterGain.connect(AC.destination); src.start();
+    }
+    AC.resume(); waterGain.gain.linearRampToValueAtTime(.12,AC.currentTime+1.2);
+    ambienceStart();
+  }
   function setSound(on){
     soundOn=on;
     document.getElementById('pondSound').textContent=on?'聽水 · 關':'聽水 · 開';
-    if(on){
-      if(!AC){
-        AC=new (window.AudioContext||window.webkitAudioContext)();
-        var len=2*AC.sampleRate, buf=AC.createBuffer(1,len,AC.sampleRate), d=buf.getChannelData(0), last=0;
-        for(var i=0;i<len;i++){ var w=Math.random()*2-1; last=(last+.02*w)/1.02; d[i]=last*3.2; }
-        var src=AC.createBufferSource(); src.buffer=buf; src.loop=true;
-        var f=AC.createBiquadFilter(); f.type='lowpass'; f.frequency.value=420;
-        waterGain=AC.createGain(); waterGain.gain.value=0;
-        src.connect(f); f.connect(waterGain); waterGain.connect(AC.destination); src.start();
-      }
-      AC.resume(); waterGain.gain.linearRampToValueAtTime(.12,AC.currentTime+1.2);
-      ambTimer=setInterval(function(){ if(Math.random()<.75) pluck(SCALE[Math.floor(Math.random()*SCALE.length)]); },3600);
-    } else {
-      if(waterGain) waterGain.gain.linearRampToValueAtTime(0,AC.currentTime+.5);
+    if(on){ loadTone(function(ok){ if(!soundOn) return; if(ok) initTone(); else initWA(); }); }
+    else {
       clearInterval(ambTimer);
+      if(toneNoiseGain) toneNoiseGain.gain.rampTo(0,.4);
+      if(waterGain && AC) waterGain.gain.linearRampToValueAtTime(0,AC.currentTime+.5);
     }
   }
   document.getElementById('pondSound').addEventListener('click',function(){ setSound(!soundOn); });
 
-  addEventListener('resize',function(){ if(panel.classList.contains('open')) sizeKoi(); });
   var pObs=new MutationObserver(function(){
     var open=panel.classList.contains('open');
     if(open && !running){ running=true; requestAnimationFrame(function(){ requestAnimationFrame(function(){ sizeKoi(); pondLoop(); addRipple(.5,.5); }); }); }
@@ -279,68 +317,82 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
   pObs.observe(panel,{attributes:true,attributeFilter:['class']});
 })();
 
-/* ================= BRUSH: tracing panel ================= */
+/* ================= BRUSH: tracing panel (layered canvases, incremental strokes) ================= */
 (function(){
   var panel=document.getElementById('panel-brush'); if(!panel) return;
-  var cv=document.getElementById('brushCanvas'), ctx=cv.getContext('2d');
-  var W=cv.width, H=cv.height, chars=['荷','大','飛','鄧','機','長'], ci=0;
-  var GRID=68, cell=W/GRID, targets=null, covered=null, totalT=0, strokes=[], curStroke=null, inited=false;
-  var fill=document.getElementById('brushFill'), msg=document.getElementById('brushMsg');
+  var guide=document.getElementById('brushGuide'), draw=document.getElementById('brushCanvas');
+  var gtx=guide.getContext('2d'), dtx=draw.getContext('2d');
+  var W=draw.width, H=draw.height;
+  var chars=['鄧','機','長','的','雞','巴','大'], ci=0;
+  var GRID=68, cell=W/GRID, targets=null, covered=null, totalT=0, coveredN=0, lastPct=-1;
+  var drawing=false, lastPt=null, inited=false;
+  var fill=document.getElementById('brushFill'), msg=document.getElementById('brushMsg'), pctEl=document.getElementById('brushPct');
+  function verm(){ return chars[ci]==='雞'||chars[ci]==='巴'; }
   function buildGuide(){
     var off=document.createElement('canvas'); off.width=W; off.height=H;
     var o=off.getContext('2d');
     o.font='470px BrushLocal, serif'; o.textAlign='center'; o.textBaseline='middle';
     o.fillStyle='#fff'; o.fillText(chars[ci],W/2,H/2+14);
     var data=o.getImageData(0,0,W,H).data;
-    targets=new Uint8Array(GRID*GRID); covered=new Uint8Array(GRID*GRID); totalT=0;
+    targets=new Uint8Array(GRID*GRID); covered=new Uint8Array(GRID*GRID); totalT=0; coveredN=0; lastPct=-1;
     for(var gy=0;gy<GRID;gy++) for(var gx=0;gx<GRID;gx++){
       var px=Math.min(W-1,(gx+.5)*cell|0), py=Math.min(H-1,(gy+.5)*cell|0);
       if(data[(py*W+px)*4+3]>90){ targets[gy*GRID+gx]=1; totalT++; }
     }
-    strokes=[]; render(); updMsg(0);
+    gtx.clearRect(0,0,W,H);
+    gtx.strokeStyle='rgba(217,169,79,.16)'; gtx.lineWidth=2;
+    gtx.strokeRect(26,26,W-52,H-52);
+    gtx.beginPath();
+    gtx.moveTo(W/2,26); gtx.lineTo(W/2,H-26); gtx.moveTo(26,H/2); gtx.lineTo(W-26,H/2);
+    gtx.moveTo(26,26); gtx.lineTo(W-26,H-26); gtx.moveTo(W-26,26); gtx.lineTo(26,H-26);
+    gtx.stroke();
+    gtx.font='470px BrushLocal, serif'; gtx.textAlign='center'; gtx.textBaseline='middle';
+    gtx.fillStyle=verm()?'rgba(224,73,47,.20)':'rgba(246,240,225,.15)';
+    gtx.fillText(chars[ci],W/2,H/2+14);
+    dtx.clearRect(0,0,W,H);
+    updMsg(0,true);
   }
-  function render(){
-    ctx.clearRect(0,0,W,H);
-    ctx.strokeStyle='rgba(217,169,79,.16)'; ctx.lineWidth=2;
-    ctx.strokeRect(26,26,W-52,H-52);
-    ctx.beginPath();
-    ctx.moveTo(W/2,26); ctx.lineTo(W/2,H-26); ctx.moveTo(26,H/2); ctx.lineTo(W-26,H/2);
-    ctx.moveTo(26,26); ctx.lineTo(W-26,H-26); ctx.moveTo(W-26,26); ctx.lineTo(26,H-26);
-    ctx.stroke();
-    ctx.font='470px BrushLocal, serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillStyle='rgba(246,240,225,.15)'; ctx.fillText(chars[ci],W/2,H/2+14);
-    ctx.strokeStyle='rgba(255,233,176,.92)'; ctx.lineCap='round'; ctx.lineJoin='round';
-    strokes.forEach(function(st){
-      ctx.lineWidth=st.w; ctx.beginPath();
-      st.pts.forEach(function(p,i){ if(i===0) ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[0],p[1]); });
-      ctx.stroke();
-    });
-  }
-  var pctEl=document.getElementById('brushPct');
-  function updMsg(pct){
+  function updMsg(pct,force){
+    if(!force && pct===lastPct) return; lastPct=pct;
     fill.style.width=pct+'%'; if(pctEl) pctEl.textContent='描摹 '+pct+'%';
     if(pct>=85) msg.textContent='形神兼備！這一字，機長點頭。';
     else if(pct>=60) msg.textContent='已得其形——過六成了，這一字成了。';
     else if(pct>=25) msg.textContent='漸入佳境，筆勢再放開些。';
     else if(pct>0) msg.textContent='落筆了。照著淡字，慢慢描滿。';
+    else msg.textContent='落筆吧，第一筆最難，也最痛快。';
   }
   function mark(x,y){
     var rad=30, gx0=Math.max(0,(x-rad)/cell|0), gx1=Math.min(GRID-1,(x+rad)/cell|0),
-        gy0=Math.max(0,(y-rad)/cell|0), gy1=Math.min(GRID-1,(y+rad)/cell|0), hit=0;
+        gy0=Math.max(0,(y-rad)/cell|0), gy1=Math.min(GRID-1,(y+rad)/cell|0), hit=false;
     for(var gy=gy0;gy<=gy1;gy++) for(var gx=gx0;gx<=gx1;gx++){
       var cx=(gx+.5)*cell, cy=(gy+.5)*cell;
-      if((cx-x)*(cx-x)+(cy-y)*(cy-y)<rad*rad && targets[gy*GRID+gx] && !covered[gy*GRID+gx]){ covered[gy*GRID+gx]=1; hit++; }
+      if((cx-x)*(cx-x)+(cy-y)*(cy-y)<rad*rad && targets[gy*GRID+gx] && !covered[gy*GRID+gx]){ covered[gy*GRID+gx]=1; coveredN++; hit=true; }
     }
-    if(hit){ var c=0; for(var i=0;i<covered.length;i++) c+=covered[i]; updMsg(Math.round(c/totalT*100)); }
+    if(hit) updMsg(Math.round(coveredN/totalT*100));
   }
-  function pos(e){ var r=cv.getBoundingClientRect(); return [(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height]; }
-  cv.addEventListener('pointerdown',function(e){ e.preventDefault(); cv.setPointerCapture(e.pointerId);
-    var p=pos(e); curStroke={w:26,pts:[p]}; strokes.push(curStroke); mark(p[0],p[1]); render(); });
-  cv.addEventListener('pointermove',function(e){ if(!curStroke) return; var p=pos(e);
-    curStroke.pts.push(p); mark(p[0],p[1]); render(); });
-  ['pointerup','pointercancel'].forEach(function(ev){ cv.addEventListener(ev,function(){ curStroke=null; }); });
+  function seg(x,y){
+    dtx.strokeStyle=verm()?'rgba(255,120,90,.92)':'rgba(255,233,176,.92)';
+    dtx.lineWidth=27; dtx.lineCap='round'; dtx.lineJoin='round';
+    dtx.beginPath(); dtx.moveTo(lastPt[0],lastPt[1]); dtx.lineTo(x,y); dtx.stroke();
+    lastPt=[x,y]; mark(x,y);
+  }
+  function pos(e){ var r=draw.getBoundingClientRect(); return [(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height]; }
+  draw.addEventListener('pointerdown',function(e){ e.preventDefault(); draw.setPointerCapture(e.pointerId);
+    drawing=true; lastPt=pos(e);
+    dtx.fillStyle=verm()?'rgba(255,120,90,.92)':'rgba(255,233,176,.92)';
+    dtx.beginPath(); dtx.arc(lastPt[0],lastPt[1],13,0,6.29); dtx.fill(); mark(lastPt[0],lastPt[1]); });
+  draw.addEventListener('pointermove',function(e){ if(!drawing) return;
+    var evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];
+    for(var i=0;i<evs.length;i++){ var p=pos(evs[i]); seg(p[0],p[1]); } });
+  ['pointerup','pointercancel'].forEach(function(ev){ draw.addEventListener(ev,function(){ drawing=false; }); });
   document.getElementById('brushNext').addEventListener('click',function(){ ci=(ci+1)%chars.length; buildGuide(); });
   document.getElementById('brushClear').addEventListener('click',function(){ buildGuide(); });
+  window.__axBrushTest=function(){ /* headless self-test: spiral over the guide char */
+    var cx=W/2, cy=H/2;
+    drawing=true; lastPt=[cx-150,cy];
+    for(var a=0;a<12.6;a+=.22){ var r=20+a*11.5, x=cx+Math.cos(a)*r, y=cy+Math.sin(a)*r*.92; seg(x,y); }
+    drawing=false;
+  };
   var bObs=new MutationObserver(function(){
     if(panel.classList.contains('open') && !inited){
       inited=true;
@@ -350,4 +402,14 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
   });
   bObs.observe(panel,{attributes:true,attributeFilter:['class']});
 })();
+
+/* ---------- deep links: #pond / #brush / #scroll ---------- */
+setTimeout(function(){
+  var h=location.hash;
+  if(h==='#pond' && window.openPanel) openPanel('panel-pond');
+  else if(h==='#brush' && window.openPanel){ openPanel('panel-brush');
+    if(/[?&]draw=1/.test(location.search)) setTimeout(function(){ if(window.__axBrushTest) __axBrushTest(); },900); }
+  else if(h==='#scroll'){ var t=document.getElementById('ax-scroll'); if(t) t.scrollIntoView(); }
+  else if(h && h.length>1){ var g=document.getElementById(h.slice(1)); if(g) g.scrollIntoView(); }
+},450);
 })();
