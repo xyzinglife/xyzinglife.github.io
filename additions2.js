@@ -67,12 +67,15 @@ whenVisible(document.getElementById('ax3dBox'), async function(){
     var key=new THREE.PointLight(0xf7cf6b,60,30); key.position.set(3,3,4); scene.add(key);
     var rim=new THREE.PointLight(0x4285f4,40,30); rim.position.set(-4,-2,3); scene.add(rim);
     var group=new THREE.Group(); scene.add(group);
-    /* star dust */
+    /* star dust (positions via maath.random.inSphere when available) */
     var N=2000, pos=new Float32Array(N*3), col=new Float32Array(N*3);
+    var sphereOk=false;
+    try{ if(maath && maath.random && typeof maath.random.inSphere==='function'){ maath.random.inSphere(pos,{radius:3.3}); sphereOk=true;
+      for(var q=0;q<N;q++){ pos[q*3+1]*=.62; } } }catch(e){ sphereOk=false; }
     var cGold=new THREE.Color('#f7cf6b'), cBlue=new THREE.Color('#9db8dd'), cWhite=new THREE.Color('#f6f0e1'), tmp=new THREE.Color();
     for(var i=0;i<N;i++){
-      var r=2.6+Math.random()*3.4, th=Math.random()*Math.PI*2, ph=Math.acos(2*Math.random()-1);
-      pos[i*3]=r*Math.sin(ph)*Math.cos(th); pos[i*3+1]=r*Math.cos(ph)*.62; pos[i*3+2]=r*Math.sin(ph)*Math.sin(th);
+      if(!sphereOk){ var r=2.6+Math.random()*3.4, th=Math.random()*Math.PI*2, ph=Math.acos(2*Math.random()-1);
+        pos[i*3]=r*Math.sin(ph)*Math.cos(th); pos[i*3+1]=r*Math.cos(ph)*.62; pos[i*3+2]=r*Math.sin(ph)*Math.sin(th); }
       var pick=Math.random(); tmp.copy(pick<.45?cGold:(pick<.75?cBlue:cWhite));
       if(window.d3 && d3.interpolateRgb){ try{ var s=d3.interpolateRgb('#f7cf6b','#9db8dd')(Math.random()), m=s.match(/[\d.]+/g);
         if(m) tmp.setRGB(+m[0]/255,+m[1]/255,+m[2]/255); }catch(_e){} }
@@ -137,11 +140,8 @@ whenVisible(document.getElementById('ax3dBox'), async function(){
     renderer.setAnimationLoop(function(){
       if(!visible) return;
       var dt=Math.min(clock.getDelta(),.05);
-      var dampF=(maath && maath.easing && maath.easing.damp) ? maath.easing.damp : null;
-      if(dampF){
-        group.rotation.y=dampF(group.rotation.y,targetRY,4,dt);
-        group.rotation.x=dampF(group.rotation.x,targetRX,4,dt);
-      } else { group.rotation.y+=(targetRY-group.rotation.y)*Math.min(1,dt*5); group.rotation.x+=(targetRX-group.rotation.x)*Math.min(1,dt*5); }
+      /* manual exponential damp (maath.easing.damp in this build operates on objects, not scalars) */
+      group.rotation.y+=(targetRY-group.rotation.y)*Math.min(1,dt*5); group.rotation.x+=(targetRX-group.rotation.x)*Math.min(1,dt*5);
       if(!dragging) targetRY+=dt*.07;
       stars.rotation.y+=dt*.02;
       pulse=Math.max(0,pulse-dt*1.6);
@@ -183,7 +183,8 @@ whenVisible(document.getElementById('axPixiBox'), async function(){
       var nx=panV+(e.clientX-panX), minX=-(worldW-W);
       viewport.x=Math.max(minX,Math.min(0,nx)); __ps.vx=Math.round(viewport.x); });
     ['pointerup','pointercancel','pointerleave'].forEach(function(ev){ app.canvas.addEventListener(ev,function(){ panX=null; }); });
-    viewport.clamp({left:0,right:worldW,top:0,bottom:H});
+    /* no clamp plugin: manual pan bounds are enforced in the pointermove handler */
+    app.ticker.add(function(){ try{ viewport.update(); }catch(e){} __ps.vx=Math.round(viewport.x); __ps.frames=(__ps.frames||0)+1; });
     /* distant lotus silhouettes */
     var bg=new PIXI.Graphics();
     bg.fill({color:0x0d2650,alpha:.55});

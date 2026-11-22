@@ -641,9 +641,9 @@ img{display:block;max-width:100%}
     <button class="back" data-close>‹ 返回</button>
     <div class="ptitle brush">墨池</div>
   </div>
-  <div class="pond-stage">
-    <canvas id="pondGL"></canvas>
-    <canvas id="pondKoi"></canvas>
+  <div class="pond-stage" style="position:relative;flex:1;overflow:hidden">
+    <canvas id="pondGL" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
+    <canvas id="pondKoi" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
     <div class="pond-hud">
       <div class="cnt">已餵食 <b id="pondFed">0</b> 次 · 點水面喚鯉，撒食看它們搶</div>
       <div class="cnt" id="pondRecOut" style="display:none"></div>
@@ -664,7 +664,7 @@ img{display:block;max-width:100%}
   </div>
   <div class="stage" style="justify-content:flex-start;padding-top:10px;overflow-y:auto">
     <p class="p-caption rise" style="--i:0">照著淡字描，把格子填滿六成，就有評語</p>
-    <div class="rise" style="--i:1;margin-top:14px"><div class="brush-stack"><canvas id="brushGuide" width="680" height="680"></canvas><canvas id="brushCanvas" width="680" height="680"></canvas></div></div>
+    <div class="rise" style="--i:1;margin-top:14px"><div class="brush-stack" style="position:relative;width:min(86vw,340px);height:min(86vw,340px)"><canvas id="brushGuide" width="680" height="680" style="position:absolute;inset:0;width:100%;height:100%"></canvas><canvas id="brushCanvas" width="680" height="680" style="position:absolute;inset:0;width:100%;height:100%"></canvas></div></div>
     <div class="brush-bar rise" style="--i:2"><i id="brushFill"></i></div>
     <div class="brush-pct rise" style="--i:2" id="brushPct">描摹 0%</div>
     <div id="brushMsg" class="rise" style="--i:3">落筆吧，第一筆最難，也最痛快。</div>

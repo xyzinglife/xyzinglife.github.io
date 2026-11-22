@@ -1,4 +1,4 @@
-/* ===== v4.4 additions — Motion Studio 21: Anime.js timelines / GLSL shader pond / Web Audio ===== */
+/* ===== v4 additions — Motion Studio 21: Anime.js timelines / GLSL shader pond / Web Audio ===== */
 (function(){
 'use strict';
 var __dbg=/[?&]debug=1/.test(location.search);
@@ -10,7 +10,13 @@ if(__dbg){
   dv.id='axDebug';
   dv.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(0,0,0,.82);color:#7dff8a;font:11px/1.5 monospace;padding:6px 8px;white-space:pre-wrap;pointer-events:none';
   document.addEventListener('DOMContentLoaded',function(){ document.body.appendChild(dv); });
-  setInterval(function(){ if(dv.parentNode) dv.textContent='STATE '+JSON.stringify(window.__axState)+'\nERRS '+window.__axErrs.slice(-3).join(' | '); },700);
+  setInterval(function(){ if(dv.parentNode){ try{
+      var S=window.__axState; S.env={iw:innerWidth,ih:innerHeight,dpr:devicePixelRatio||1};
+      var kc=document.getElementById('pondKoi'), bc=document.getElementById('brushCanvas'), st=document.querySelector('.brush-stack'), ps=document.querySelector('.pond-stage');
+      S.css={pondPos:kc?getComputedStyle(kc).position:'-',brushPos:bc?getComputedStyle(bc).position:'-',
+        stack:st?[st.clientWidth,st.clientHeight]:null, stage:ps?[ps.clientWidth,ps.clientHeight]:null};
+    }catch(e){}
+    dv.textContent='STATE '+JSON.stringify(window.__axState)+'\nERRS '+window.__axErrs.slice(-3).join(' | '); } },700);
 }
 var hasAnime = typeof window.anime === 'function';
 function revealNow(el){ el.style.opacity=1; el.style.transform='none'; }
