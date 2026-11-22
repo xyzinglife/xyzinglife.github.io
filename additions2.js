@@ -94,25 +94,34 @@ whenVisible(document.getElementById('ax3dBox'), async function(){
     jade.raycast=bvh.acceleratedRaycast;
     group.add(jade);
     /* floating brush text: troika, fallback to canvas texture */
-    var textObj=null;
+    var textObj=null, spriteText=null;
+    function addFallbackText(){
+      if(spriteText) return;
+      function draw(){
+        if(spriteText) return;
+        var cv=document.createElement('canvas'); cv.width=1024; cv.height=160;
+        var c=cv.getContext('2d'); c.font='110px BrushFull, serif'; c.textAlign='center'; c.textBaseline='middle';
+        c.fillStyle='#f6f0e1'; c.fillText('鄧機長的雞巴大',512,84);
+        var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true,depthWrite:false}));
+        sp.scale.set(5.4,.85,1); sp.position.set(0,2.35,0); group.add(sp);
+        spriteText=sp; textObj={_fallback:true};
+      }
+      if(document.fonts && document.fonts.load){ document.fonts.load('110px BrushFull').then(draw).catch(draw); setTimeout(draw,2500); }
+      else draw();
+    }
+    addFallbackText();
     try{
       var troika=await import('troika-three-text');
       var tx=new troika.Text();
       tx.text='鄧機長的雞巴大'; tx.font='brush-full.woff2'; tx.fontSize=.6;
       tx.color='#f6f0e1'; tx.anchorX='center'; tx.anchorY='middle';
       tx.position.set(0,2.35,0); tx.material.depthWrite=false;
-      scene.add(tx); tx.sync(); textObj=tx;
-      setTimeout(function(){ if(!tx.geometry){ scene.remove(tx); addFallbackText(); } },7000);
-    }catch(e){ addFallbackText(); }
-    function addFallbackText(){
-      if(textObj && textObj._fallback) return;
-      var cv=document.createElement('canvas'); cv.width=1024; cv.height=160;
-      var c=cv.getContext('2d'); c.font='110px BrushFull, serif'; c.textAlign='center'; c.textBaseline='middle';
-      c.fillStyle='#f6f0e1'; c.fillText('鄧機長的雞巴大',512,84);
-      var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true,depthWrite:false}));
-      sp.scale.set(5.4,.85,1); sp.position.set(0,2.35,0); scene.add(sp);
-      textObj={_fallback:true};
-    }
+      tx.addEventListener('synccomplete',function(){
+        if(spriteText){ group.remove(spriteText); spriteText=null; }
+        group.add(tx); textObj=tx;
+      });
+      tx.sync();
+    }catch(e){ /* canvas sprite already in place */ }
     document.getElementById('ax3dTip').style.display='none';
     /* interaction: drag to rotate (maath damp), tap jade via raycast */
     var targetRX=.12, targetRY=.4, downAt=0, lastX=0, lastY=0, dragging=false, pulse=0;
