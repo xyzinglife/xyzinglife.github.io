@@ -1,4 +1,4 @@
-/* ===== v4 additions — Motion Studio 21: Anime.js timelines / GLSL shader pond / Web Audio ===== */
+/* ===== v4.4 additions — Motion Studio 21: Anime.js timelines / GLSL shader pond / Web Audio ===== */
 (function(){
 'use strict';
 var __dbg=/[?&]debug=1/.test(location.search);
