@@ -242,6 +242,13 @@ img{display:block;max-width:100%}
         <span class="go"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 5l7 7-7 7" stroke="#d9a94f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
     </button>
+    <button class="card reveal" data-scrollto="ax-film">
+      <div class="thumb"><img class="ph" loading="lazy" decoding="async" src="takeoff-ink.webp" alt="動卷"></div>
+      <div class="body">
+        <div><h3 class="brush">動卷</h3><div class="sub">會動的標題 · 循環放映</div></div>
+        <span class="go"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 5l7 7-7 7" stroke="#d9a94f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+    </button>
   </div>
 
   <!-- ===== v4 新增：長卷 ===== -->
@@ -398,6 +405,20 @@ img{display:block;max-width:100%}
     <p class="ax-note" style="text-align:center">一幅兩千四百像素寬的金塵長卷，裝在小小的框裡<br>左右拖動漫遊，點任意處，星塵會彈開再聚回來</p>
   </div>
 
+  <!-- ===== v4.3 新增：動卷（Remotion 渲染 + FFmpeg 壓製） ===== -->
+  <div class="ax-sec" id="ax-film">
+    <div class="ax-head ax-reveal">
+      <div class="k">動 卷</div>
+      <h3 class="brush">活過來的標題</h3>
+      <p>金 塵 上 升 · 大 字 浮 現 · 六 秒 一 輪</p>
+      <div class="ax-rule"></div>
+    </div>
+    <div class="ax-reveal" style="border:1px solid rgba(217,169,79,.25);border-radius:16px;overflow:hidden;background:#050f22">
+      <video src="ink-loop.mp4" autoplay muted loop playsinline preload="metadata" style="width:100%;display:block;aspect-ratio:16/9;object-fit:cover"></video>
+    </div>
+    <p class="ax-note" style="text-align:center">這一卷是真的一格一格渲染出來的影片：九十顆金塵、七個大字<br>渲染用 Remotion，壓製用 FFmpeg，六秒一輪，無聲循環</p>
+  </div>
+
   <!-- ===== v4 新增：詩篇 ===== -->
   <div class="ax-sec" id="ax-poems">
     <div class="ax-head ax-reveal">
@@ -437,8 +458,26 @@ img{display:block;max-width:100%}
       <div class="btnrow" style="margin-top:16px;justify-content:center">
         <button class="abtn" id="axCalligReplay">重寫一遍</button>
       </div>
-      <p class="ax-note">毛筆字是本站的魂：馬善政毛筆體，七字全齊<br>想親手寫，去「臨書」裡落筆</p>
+      <p class="ax-note">毛筆字是本站的魂：芫荽手寫體，七字全齊<br>想親手寫，去「臨書」裡落筆</p>
     </div>
+  </div>
+
+  <!-- ===== v4.3 新增：金印（Motion Canvas 生成器動畫） ===== -->
+  <div class="ax-sec" id="ax-seal">
+    <div class="ax-head ax-reveal">
+      <div class="k">金 印</div>
+      <h3 class="brush">畫出來的印</h3>
+      <p>一 筆 成 環 · 四 秒 一 輪</p>
+      <div class="ax-rule"></div>
+    </div>
+    <div class="ax-reveal" style="border:1px solid rgba(217,169,79,.25);border-radius:16px;overflow:hidden;background:#050f22">
+      <iframe src="mc-seal.html" loading="lazy" title="金印動畫" style="width:100%;height:min(78vw,420px);border:0;display:block"></iframe>
+    </div>
+    <p class="ax-note" style="text-align:center">這枚印不是錄的、也不是貼的圖：金環是一筆一筆即時畫出來的<br>驅動它的是 Motion Canvas 的生成器動畫引擎</p>
+    <div class="ax-reveal" style="border:1px solid rgba(217,169,79,.25);border-radius:16px;overflow:hidden;background:#050f22;margin-top:18px">
+      <video src="jade-seal.mp4" autoplay muted loop playsinline preload="metadata" style="width:100%;display:block;aspect-ratio:16/9;object-fit:cover"></video>
+    </div>
+    <p class="ax-note" style="text-align:center">下面這枚是三維鑄的：方印被一刀橫穿成孔、頂上加了球鈕<br>布爾雕刻用 React Three CSG，輝光後期用 React Postprocessing，渲染成片</p>
   </div>
 
   <div class="foot">水 墨 夜 荷<br>Powered by Netlify</div>

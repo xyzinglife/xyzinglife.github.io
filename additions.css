@@ -1,3 +1,5 @@
+@font-face{font-family:'BrushFull';src:url('brush-full.woff2') format('woff2');font-display:swap}
+.ax-cards .brush,.ax-head h3,.chap h4,.poem h5{font-family:'BrushFull','BrushLocal',serif}
 /* ===== v4 additions: appended only, original styles untouched ===== */
 .ax-cards{margin-top:26px}
 .ax-sec{max-width:520px;margin:64px auto 0;padding:0 6px}

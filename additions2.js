@@ -54,7 +54,7 @@ whenVisible(document.getElementById('ax3dBox'), async function(){
   try{
     var THREE=await import('three');
     var bvh=await import('three-mesh-bvh');
-    var maath=await import('maath');
+    var maath=null; try{ maath=await import('maath'); }catch(e){}
     var W=box.clientWidth, H=box.clientHeight;
     var renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
     renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
@@ -95,7 +95,7 @@ whenVisible(document.getElementById('ax3dBox'), async function(){
     try{
       var troika=await import('troika-three-text');
       var tx=new troika.Text();
-      tx.text='鄧機長的雞巴大'; tx.font='brush2.woff2'; tx.fontSize=.6;
+      tx.text='鄧機長的雞巴大'; tx.font='brush-full.woff2'; tx.fontSize=.6;
       tx.color='#f6f0e1'; tx.anchorX='center'; tx.anchorY='middle';
       tx.position.set(0,2.35,0); tx.material.depthWrite=false;
       scene.add(tx); tx.sync(); textObj=tx;
@@ -104,7 +104,7 @@ whenVisible(document.getElementById('ax3dBox'), async function(){
     function addFallbackText(){
       if(textObj && textObj._fallback) return;
       var cv=document.createElement('canvas'); cv.width=1024; cv.height=160;
-      var c=cv.getContext('2d'); c.font='110px BrushLocal, serif'; c.textAlign='center'; c.textBaseline='middle';
+      var c=cv.getContext('2d'); c.font='110px BrushFull, serif'; c.textAlign='center'; c.textBaseline='middle';
       c.fillStyle='#f6f0e1'; c.fillText('鄧機長的雞巴大',512,84);
       var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true,depthWrite:false}));
       sp.scale.set(5.4,.85,1); sp.position.set(0,2.35,0); scene.add(sp);
@@ -137,7 +137,7 @@ whenVisible(document.getElementById('ax3dBox'), async function(){
     renderer.setAnimationLoop(function(){
       if(!visible) return;
       var dt=Math.min(clock.getDelta(),.05);
-      var dampF=(maath.easing && maath.easing.damp) ? maath.easing.damp : null;
+      var dampF=(maath && maath.easing && maath.easing.damp) ? maath.easing.damp : null;
       if(dampF){
         group.rotation.y=dampF(group.rotation.y,targetRY,4,dt);
         group.rotation.x=dampF(group.rotation.x,targetRX,4,dt);
@@ -174,7 +174,13 @@ whenVisible(document.getElementById('axPixiBox'), async function(){
     var worldW=2400;
     var viewport=new vp.Viewport({screenWidth:W,screenHeight:H,worldWidth:worldW,worldHeight:H,events:app.renderer.events});
     app.stage.addChild(viewport);
-    viewport.drag({direction:'x'}).decelerate({friction:.92});
+    var panX=null, panV=0;
+    app.canvas.style.touchAction='none';
+    app.canvas.addEventListener('pointerdown',function(e){ panX=e.clientX; panV=viewport.x; });
+    app.canvas.addEventListener('pointermove',function(e){ if(panX===null) return;
+      var nx=panV+(e.clientX-panX), minX=-(worldW-W);
+      viewport.x=Math.max(minX,Math.min(0,nx)); });
+    ['pointerup','pointercancel','pointerleave'].forEach(function(ev){ app.canvas.addEventListener(ev,function(){ panX=null; }); });
     viewport.clamp({left:0,right:worldW,top:0,bottom:H});
     /* distant lotus silhouettes */
     var bg=new PIXI.Graphics();
@@ -241,7 +247,7 @@ whenVisible(document.getElementById('axPixiBox'), async function(){
       })();
       var recorder=new mod.Recorder({
         name:'mochi-pond', duration:6, frameRate:30, download:true,
-        encoder:new mod.Encoders.MediaCaptureEncoder({encoderOptions:{mimeType:'video/webm',videoBitsPerSecond:5_000_000}})
+        encoder:new mod.MediaCaptureEncoder({encoderOptions:{mimeType:'video/webm',videoBitsPerSecond:5_000_000}})
       });
       await recorder.start(comp);
       setTimeout(function(){ stopDraw=true; },6500);
@@ -264,3 +270,8 @@ whenVisible(document.getElementById('axPixiBox'), async function(){
     setTimeout(function(){ busy=false; btn.textContent='錄下這一池'; },6800);
   });
 })();
+
+/* ---------- lightbox: Esc to close ---------- */
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){ var lb=document.getElementById('axLightbox'); if(lb) lb.classList.remove('open'); }
+});

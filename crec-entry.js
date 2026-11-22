@@ -1,2 +1,3 @@
 export * from "./crec-Recorder.js";
-export * as Encoders from "./crec-index.js";
+import MediaCaptureEncoder from "./crec-MediaCaptureEncoder.js";
+export { MediaCaptureEncoder };

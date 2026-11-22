@@ -1,6 +1,17 @@
 /* ===== v4 additions — Motion Studio 21: Anime.js timelines / GLSL shader pond / Web Audio ===== */
 (function(){
 'use strict';
+var __dbg=/[?&]debug=1/.test(location.search);
+window.__axState={};
+if(__dbg){
+  window.__axErrs=[];
+  window.addEventListener('error',function(e){ window.__axErrs.push(String(e.message||e.error||'err')); });
+  var dv=document.createElement('div');
+  dv.id='axDebug';
+  dv.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(0,0,0,.82);color:#7dff8a;font:11px/1.5 monospace;padding:6px 8px;white-space:pre-wrap;pointer-events:none';
+  document.addEventListener('DOMContentLoaded',function(){ document.body.appendChild(dv); });
+  setInterval(function(){ if(dv.parentNode) dv.textContent='STATE '+JSON.stringify(window.__axState)+'\nERRS '+window.__axErrs.slice(-3).join(' | '); },700);
+}
 var hasAnime = typeof window.anime === 'function';
 function revealNow(el){ el.style.opacity=1; el.style.transform='none'; }
 
@@ -57,7 +68,7 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
   var state={p:0}, cur=0, playing=false;
   function drawChar(ch,verm){
     octx.clearRect(0,0,W,H);
-    octx.font='520px BrushLocal, serif';
+    octx.font='520px BrushFull, serif';
     octx.textAlign='center'; octx.textBaseline='middle';
     octx.fillStyle=verm?'#e0492f':'#f6f0e1';
     octx.fillText(ch,W/2,H/2+18);
@@ -103,7 +114,7 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
   var started=false;
   var io3=new IntersectionObserver(function(es){
     es.forEach(function(e){ if(e.isIntersecting && !started){ started=true;
-      if(document.fonts && document.fonts.load){ document.fonts.load('100px BrushLocal').then(function(){ setTimeout(playAll,250); }); }
+      if(document.fonts && document.fonts.load){ document.fonts.load('100px BrushFull').then(function(){ setTimeout(playAll,250); }); }
       else setTimeout(playAll,250);
     }});
   },{threshold:.4});
@@ -165,6 +176,8 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
     KW=koiCv.clientWidth; KH=koiCv.clientHeight;
     if((KW<200||KH<200) && sizeTries<12){ sizeTries++; setTimeout(sizeKoi,120); return; }
     sizeTries=0;
+    if(KW<50){ KW=koiCv.parentNode?koiCv.parentNode.clientWidth||360:360; }
+    if(KH<50){ KH=koiCv.parentNode?koiCv.parentNode.clientHeight||480:480; }
     koiCv.width=KW*DPR; koiCv.height=KH*DPR; kx.setTransform(DPR,0,0,DPR,0,0);
     glCv.width=KW*DPR; glCv.height=KH*DPR; if(gl) gl.viewport(0,0,glCv.width,glCv.height);
     if(!kois.length){ for(var i=0;i<5;i++) kois.push({
@@ -191,8 +204,10 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
   }
   function pondLoop(){
     if(!running) return;
+    var __st=window.__axState.pond||(window.__axState.pond={frames:0});
+    __st.frames++; __st.KW=KW; __st.KH=KH; __st.kois=kois.length; __st.gl=!!gl; __st.prog=!!prog; __st.cw=koiCv.width; __st.ch=koiCv.height; __st.clw=koiCv.clientWidth; __st.clh=koiCv.clientHeight;
     var t=(Date.now()-startT)/1000;
-    if(gl && prog){
+    try{ if(gl && prog){
       gl.useProgram(prog);
       gl.uniform1f(uTime,t);
       if(uTint){ var tt=.5+.5*Math.sin(t*.07), rr=.82, gg=.9, bb=1.06;
@@ -205,7 +220,7 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
       gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
     } else {
       kx.fillStyle='#071630'; kx.fillRect(0,0,KW,KH);
-    }
+    } }catch(e){ window.__axErrs && window.__axErrs.push('pondGL: '+e.message); }
     kx.clearRect(0,0,KW,KH);
     /* pellets */
     for(var j=pellets.length-1;j>=0;j--){ var pl=pellets[j];
@@ -331,7 +346,7 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
   function buildGuide(){
     var off=document.createElement('canvas'); off.width=W; off.height=H;
     var o=off.getContext('2d');
-    o.font='470px BrushLocal, serif'; o.textAlign='center'; o.textBaseline='middle';
+    o.font='470px BrushFull, serif'; o.textAlign='center'; o.textBaseline='middle';
     o.fillStyle='#fff'; o.fillText(chars[ci],W/2,H/2+14);
     var data=o.getImageData(0,0,W,H).data;
     targets=new Uint8Array(GRID*GRID); covered=new Uint8Array(GRID*GRID); totalT=0; coveredN=0; lastPct=-1;
@@ -346,11 +361,12 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
     gtx.moveTo(W/2,26); gtx.lineTo(W/2,H-26); gtx.moveTo(26,H/2); gtx.lineTo(W-26,H/2);
     gtx.moveTo(26,26); gtx.lineTo(W-26,H-26); gtx.moveTo(W-26,26); gtx.lineTo(26,H-26);
     gtx.stroke();
-    gtx.font='470px BrushLocal, serif'; gtx.textAlign='center'; gtx.textBaseline='middle';
+    gtx.font='470px BrushFull, serif'; gtx.textAlign='center'; gtx.textBaseline='middle';
     gtx.fillStyle=verm()?'rgba(224,73,47,.20)':'rgba(246,240,225,.15)';
     gtx.fillText(chars[ci],W/2,H/2+14);
     dtx.clearRect(0,0,W,H);
     updMsg(0,true);
+    var __bs2=window.__axState.brush||(window.__axState.brush={downs:0}); __bs2.totalT=totalT; __bs2.ci=ci;
   }
   function updMsg(pct,force){
     if(!force && pct===lastPct) return; lastPct=pct;
@@ -377,7 +393,9 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
     lastPt=[x,y]; mark(x,y);
   }
   function pos(e){ var r=draw.getBoundingClientRect(); return [(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height]; }
-  draw.addEventListener('pointerdown',function(e){ e.preventDefault(); draw.setPointerCapture(e.pointerId);
+  draw.addEventListener('pointerdown',function(e){ e.preventDefault();
+    try{ draw.setPointerCapture(e.pointerId); }catch(err){}
+    var __bs=window.__axState.brush||(window.__axState.brush={downs:0}); __bs.downs++;
     drawing=true; lastPt=pos(e);
     dtx.fillStyle=verm()?'rgba(255,120,90,.92)':'rgba(255,233,176,.92)';
     dtx.beginPath(); dtx.arc(lastPt[0],lastPt[1],13,0,6.29); dtx.fill(); mark(lastPt[0],lastPt[1]); });
@@ -396,7 +414,7 @@ lb.addEventListener('click',function(e){ if(e.target===lb) lb.classList.remove('
   var bObs=new MutationObserver(function(){
     if(panel.classList.contains('open') && !inited){
       inited=true;
-      if(document.fonts && document.fonts.load){ document.fonts.load('100px BrushLocal').then(buildGuide); }
+      if(document.fonts && document.fonts.load){ document.fonts.load('100px BrushFull').then(buildGuide); }
       else buildGuide();
     }
   });
